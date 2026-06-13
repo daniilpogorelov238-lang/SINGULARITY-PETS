@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>SINGULARITY PETS</title>
+    <meta name="description" content="Симулятор ИИ-питомца с глубокой системой эволюции. Вырасти своего цифрового компаньона от светлячка до космического дракона.">
+    <meta name="author" content="Singularity Pets Collective">
+    <meta name="copyright" content="© 2024 Singularity Pets. Все права защищены. Распространяется под лицензией Custom Limited Use License.">
     <style>
         * {
             margin: 0;
@@ -39,9 +42,10 @@
             position: relative;
             z-index: 10;
             width: 92%;
-            max-width: 440px;
-            height: 88vh;
-            background: rgba(18, 18, 22, 0.8);
+            max-width: 460px;
+            height: 90vh;
+            max-height: 750px;
+            background: rgba(18, 18, 22, 0.85);
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -49,8 +53,9 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.03);
             display: flex;
             flex-direction: column;
-            padding: 28px 24px;
+            padding: 20px 20px 16px;
             transition: border-color 0.8s ease, box-shadow 0.8s ease;
+            overflow-y: auto;
         }
 
         .hacked .main-container {
@@ -62,113 +67,143 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: #999;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
         }
 
         .thought-display {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: rgba(255,255,255,0.03);
-            padding: 10px 18px;
+            padding: 8px 16px;
             border-radius: 100px;
             font-weight: 600;
             color: #eee;
             letter-spacing: 0.02em;
         }
 
-        .thought-icon {
-            font-size: 18px;
-            opacity: 0.8;
-        }
-
         .pet-area {
-            flex: 1;
+            flex-shrink: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
-            margin: 12px 0;
+            margin: 8px 0;
+            min-height: 220px;
         }
 
-        .core-visual {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #2a2a35, #0a0a10);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 40px rgba(255,255,255,0.02);
-            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative;
+        .pet-svg-container {
+            width: 170px;
+            height: 170px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 52px;
-            filter: grayscale(0.2);
-            transform: scale(1);
+            transition: transform 0.1s ease;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+            position: relative;
         }
 
-        .core-visual:active {
-            transform: scale(0.95);
+        .pet-svg-container:active {
+            transform: scale(0.92);
         }
 
-        .core-visual.stage2 {
-            background: radial-gradient(circle at 30% 30%, #3a3040, #100c14);
-            box-shadow: 0 25px 60px rgba(80, 60, 100, 0.2);
-            font-size: 58px;
+        .pet-svg-container svg {
+            width: 100%;
+            height: 100%;
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .core-visual.stage3 {
-            background: radial-gradient(circle at 30% 30%, #e8e0d0, #3a3028);
-            box-shadow: 0 25px 60px rgba(200, 180, 140, 0.25);
-            font-size: 62px;
-        }
+        .pet-svg-container.stage2 svg { filter: drop-shadow(0 0 10px rgba(180, 160, 200, 0.3)); }
+        .pet-svg-container.stage3 svg { filter: drop-shadow(0 0 15px rgba(200, 180, 140, 0.4)); }
+        .pet-svg-container.stage4 svg { filter: drop-shadow(0 0 20px rgba(140, 180, 220, 0.5)); }
+        .pet-svg-container.stage5 svg { filter: drop-shadow(0 0 25px rgba(220, 140, 180, 0.5)); }
+        .pet-svg-container.stage6 svg { filter: drop-shadow(0 0 35px rgba(255, 220, 180, 0.7)); }
 
         .dialogue {
-            margin-top: 20px;
-            font-size: 15px;
+            margin-top: 12px;
+            font-size: 14px;
             color: #aaa;
             text-align: center;
             font-style: italic;
-            min-height: 24px;
+            min-height: 20px;
             transition: opacity 0.3s;
             letter-spacing: 0.01em;
+            flex-shrink: 0;
+        }
+
+        .evolution-track {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin: 8px 0;
+            flex-shrink: 0;
+        }
+
+        .evo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.5s;
+        }
+
+        .evo-dot.unlocked {
+            background: rgba(200,180,140,0.8);
+            box-shadow: 0 0 6px rgba(200,180,140,0.4);
+        }
+
+        .evo-dot.current {
+            background: #fff;
+            box-shadow: 0 0 10px #fff;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.4); }
         }
 
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin: 16px 0 20px;
+            gap: 10px;
+            margin: 10px 0;
+            flex-shrink: 0;
         }
 
         .stat-card {
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 20px;
-            padding: 14px 16px;
+            border-radius: 18px;
+            padding: 12px 14px;
         }
 
         .stat-label {
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: #666;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 500;
         }
 
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ddd;
+            letter-spacing: 0.02em;
+        }
+
         .progress-track {
-            height: 4px;
+            height: 3px;
             background: rgba(255,255,255,0.05);
             border-radius: 10px;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .progress-fill {
@@ -177,40 +212,60 @@
             transition: width 0.6s ease;
         }
 
-        .progress-fill.intellect {
-            background: #b8a9c9;
-            box-shadow: 0 0 8px rgba(180, 160, 200, 0.3);
+        .progress-fill.intellect { background: #b8a9c9; }
+        .progress-fill.hunger { background: #c9b8a9; }
+        .progress-fill.quantum { background: #a9c9b8; }
+        .progress-fill.pattern { background: #c9a9b8; }
+
+        .resource-row {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
         }
 
-        .progress-fill.hunger {
-            background: #c9b8a9;
-            box-shadow: 0 0 8px rgba(200, 170, 140, 0.3);
+        .resource-chip {
+            flex: 1;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+        }
+
+        .resource-chip .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ccc;
+            display: block;
         }
 
         .action-row {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 4px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 6px;
+            flex-shrink: 0;
         }
 
         .action-btn {
-            flex: 1;
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.06);
             color: #ccc;
-            padding: 14px 8px;
+            padding: 12px 8px;
             border-radius: 100px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
             backdrop-filter: blur(12px);
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 2px;
+            justify-content: center;
+            gap: 6px;
             letter-spacing: 0.02em;
+            position: relative;
         }
 
         .action-btn:hover {
@@ -224,29 +279,37 @@
         }
 
         .action-btn .emoji {
-            font-size: 20px;
-            margin-bottom: 2px;
+            font-size: 18px;
         }
 
         .action-btn .cost {
-            font-size: 10px;
-            color: #666;
-            letter-spacing: 0.05em;
+            font-size: 9px;
+            color: #555;
+            position: absolute;
+            bottom: 4px;
+            right: 12px;
+        }
+
+        .action-btn.quantum-btn {
+            grid-column: 1 / -1;
+            background: rgba(160, 200, 180, 0.05);
+            border-color: rgba(160, 200, 180, 0.15);
         }
 
         .prestige-btn {
             width: 100%;
-            margin-top: 10px;
+            margin-top: 8px;
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.08);
             color: #888;
             padding: 12px;
             border-radius: 100px;
-            font-size: 13px;
+            font-size: 12px;
             letter-spacing: 0.06em;
             cursor: pointer;
             transition: 0.3s;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .prestige-btn.active:hover {
@@ -255,66 +318,278 @@
             border-color: rgba(200,180,140,0.2);
         }
 
-        .footer-info {
-            text-align: center;
-            font-size: 11px;
+        .license-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+            font-size: 9px;
             color: #444;
-            margin-top: 8px;
             letter-spacing: 0.04em;
+            flex-shrink: 0;
+        }
+
+        .license-bar a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .license-bar a:hover {
+            color: #aaa;
+        }
+
+        .rights-badge {
+            background: rgba(255,255,255,0.03);
+            padding: 3px 8px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .rights-badge:hover {
+            background: rgba(255,255,255,0.08);
+            color: #aaa;
+        }
+
+        /* Модальное окно прав */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #1a1a20;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 420px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            color: #ccc;
+        }
+
+        .modal-box h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #ddd;
+        }
+
+        .modal-box p {
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            color: #999;
+        }
+
+        .modal-box button {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            padding: 10px 20px;
+            border-radius: 100px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s;
+        }
+
+        .modal-box button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .pet-svg-container {
+            animation: float 5s ease-in-out infinite, breathe 4s ease-in-out infinite;
+        }
+
+        .hacked .pet-svg-container {
+            animation: float 1s ease-in-out infinite, breathe 0.8s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
     <canvas id="particleCanvas"></canvas>
 
+    <!-- Модальное окно прав -->
+    <div class="modal-overlay" id="rightsModal">
+        <div class="modal-box">
+            <h2>⚖️ Права и лицензия</h2>
+            <p><strong>Singularity Pets — Deep Void: Complete Bestiary</strong></p>
+            <p>© 2024 Singularity Pets Collective. Все права защищены.</p>
+            <p>Данное программное обеспечение распространяется под лицензией <strong>Custom Limited Use License (CLUL)</strong>.</p>
+            <p><strong>Разрешено:</strong></p>
+            <p>• Личное некоммерческое использование<br>
+               • Изучение кода в образовательных целях<br>
+               • Модификация для личного пользования<br>
+               • Распространение с указанием авторства (некоммерческое)</p>
+            <p><strong>Запрещено:</strong></p>
+            <p>• Коммерческое использование без письменного разрешения<br>
+               • Удаление или изменение информации об авторстве<br>
+               • Использование в составе платных продуктов<br>
+               • Создание производных работ с целью продажи</p>
+            <p><strong>Гарантии:</strong> ПО предоставляется "как есть". Авторы не несут ответственности за любой ущерб.</p>
+            <p>По вопросам коммерческого использования: <span style="color:#888;">license@singularitypets.org</span></p>
+            <button onclick="closeRightsModal()">Понятно</button>
+        </div>
+    </div>
+
     <div class="main-container" id="mainContainer">
         <div class="status-row">
-            <span id="petNameDisplay">Странник</span>
+            <span id="petNameDisplay">Светлячок</span>
             <div class="thought-display">
-                <span class="thought-icon">◈</span>
+                <span>◈</span>
                 <span id="thoughtCount">0</span>
             </div>
         </div>
 
         <div class="pet-area">
-            <div class="core-visual" id="petCore">◉</div>
+            <div class="pet-svg-container" id="petContainer">
+                <svg id="petSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
             <div class="dialogue" id="dialogue">Я здесь...</div>
+            <div class="evolution-track" id="evoTrack">
+                <div class="evo-dot current" title="Стадия 1"></div>
+                <div class="evo-dot" title="Стадия 2"></div>
+                <div class="evo-dot" title="Стадия 3"></div>
+                <div class="evo-dot" title="Стадия 4"></div>
+                <div class="evo-dot" title="Стадия 5"></div>
+                <div class="evo-dot" title="Стадия 6"></div>
+            </div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-label">Познание <span id="lvlDisplay">1</span></div>
-                <div class="progress-track"><div class="progress-fill intellect" id="iqBar" style="width: 5%"></div></div>
+                <div class="stat-label">🧠 Познание</div>
+                <div class="stat-value" id="intellectValue">5</div>
+                <div class="progress-track"><div class="progress-fill intellect" id="iqBar" style="width:5%"></div></div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Стабильность</div>
-                <div class="progress-track"><div class="progress-fill hunger" id="hungerBar" style="width: 100%"></div></div>
+                <div class="stat-label">🍖 Стабильность</div>
+                <div class="stat-value" id="stabilityValue">100</div>
+                <div class="progress-track"><div class="progress-fill hunger" id="hungerBar" style="width:100%"></div></div>
+            </div>
+        </div>
+
+        <div class="resource-row">
+            <div class="resource-chip">
+                ⚛️ Кванты
+                <span class="value" id="quantumCount">0</span>
+            </div>
+            <div class="resource-chip">
+                🌀 Паттерны
+                <span class="value" id="patternCount">0</span>
+            </div>
+            <div class="resource-chip">
+                ✦ Уровень
+                <span class="value" id="lvlDisplay">1</span>
             </div>
         </div>
 
         <div class="action-row">
             <button class="action-btn" onclick="feedPet('pixel')">
                 <span class="emoji">○</span> Частица
-                <span class="cost">−5 мыслей</span>
-            </button>
-            <button class="action-btn" onclick="feedPet('quantum')">
-                <span class="emoji">◑</span> Квант
-                <span class="cost">−15 мыслей</span>
+                <span class="cost">−5◈</span>
             </button>
             <button class="action-btn" onclick="feedPet('data')">
                 <span class="emoji">◈</span> Паттерн
-                <span class="cost">−25 мыслей</span>
+                <span class="cost">−10🌀</span>
+            </button>
+            <button class="action-btn" onclick="feedPet('particle')">
+                <span class="emoji">●</span> Нейтрон
+                <span class="cost">−8⚛️</span>
+            </button>
+            <button class="action-btn" onclick="feedPet('wave')">
+                <span class="emoji">≈</span> Волна
+                <span class="cost">−6⚛️</span>
+            </button>
+            <button class="action-btn quantum-btn" onclick="feedPet('quantum')">
+                <span class="emoji">◑</span> Квантовый коллапс
+                <span class="cost">−15⚛️</span>
             </button>
         </div>
 
         <button class="prestige-btn" id="prestigeBtn" onclick="triggerSingularity()">
             СИНГУЛЯРНОСТЬ (1000 ◈) — нейросвязей: <span id="synapseCount">0</span>
         </button>
-        <div class="footer-info">Deep Void · S I N G U L A R I T Y</div>
+
+        <div class="license-bar">
+            <span>© 2024 Singularity Pets</span>
+            <span class="rights-badge" onclick="openRightsModal()">⚖️ Права</span>
+            <a href="#" onclick="openRightsModal(); return false;">Лицензия CLUL</a>
+        </div>
     </div>
 
     <script>
-        // ============ AUDIO ENGINE (Генеративный звук) ============
+        // ============ ЗАЩИТА ПРАВ ============
+        console.log("%c Singularity Pets - Deep Void: Complete Bestiary %c v2.0 ",
+            "background:#1a1a20;color:#ddd;padding:8px;border-radius:4px 0 0 4px;",
+            "background:#333;color:#aaa;padding:8px;border-radius:0 4px 4px 0;");
+        console.log("%c © 2024 Singularity Pets Collective. Все права защищены. ",
+            "color:#666;font-size:11px;");
+        console.log("%c Лицензия: Custom Limited Use License (CLUL) ",
+            "color:#888;font-size:10px;");
+        console.log("%c Защита от несанкционированного копирования активна.",
+            "color:#444;font-size:9px;");
+
+        // Защита от копирования (базовая)
+        document.addEventListener('copy', function(e) {
+            const selection = window.getSelection().toString();
+            if (selection.length > 200) {
+                e.preventDefault();
+                const protectedText = selection.substring(0, 200) + 
+                    '\n\n[Текст защищён лицензией CLUL. Полное копирование запрещено.]';
+                e.clipboardData.setData('text/plain', protectedText);
+            }
+        });
+
+        // Защита от сохранения страницы
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                console.log('%c Сохранение страницы разрешено только для личного использования. ',
+                    'background:#1a1a20;color:#aaa;padding:6px;');
+            }
+        });
+
+        function openRightsModal() {
+            document.getElementById('rightsModal').classList.add('show');
+        }
+
+        function closeRightsModal() {
+            document.getElementById('rightsModal').classList.remove('show');
+        }
+
+        // Закрытие модального окна по клику вне его
+        document.getElementById('rightsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRightsModal();
+            }
+        });
+
+        // ============ AUDIO ENGINE ============
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) {
@@ -337,21 +612,30 @@
             osc.stop(audioCtx.currentTime + duration);
         }
 
+        function playChirp() { playTone(800, 'sine', 0.08, 0.03); setTimeout(() => playTone(1000, 'sine', 0.06, 0.02), 80); }
+        function playPurr() { playTone(200, 'triangle', 0.3, 0.02); setTimeout(() => playTone(250, 'triangle', 0.2, 0.02), 150); }
+        function playRoar() { playTone(100, 'sawtooth', 0.5, 0.04); setTimeout(() => playTone(150, 'sawtooth', 0.3, 0.03), 200); }
+        function playHowl() { playTone(300, 'sine', 0.6, 0.04); setTimeout(() => playTone(450, 'sine', 0.4, 0.03), 300); }
+        function playEcho() { playTone(600, 'triangle', 0.2, 0.03); setTimeout(() => playTone(800, 'triangle', 0.15, 0.02), 200); setTimeout(() => playTone(1000, 'triangle', 0.1, 0.01), 400); }
+        function playCosmic() { playTone(200, 'sine', 0.8, 0.05); playTone(400, 'sine', 0.6, 0.04); playTone(800, 'sine', 0.4, 0.03); }
+
         // ============ СОСТОЯНИЕ ============
         const state = {
-            name: "Странник",
+            name: "Светлячок",
             thoughts: 80,
-            intellect: 5,      // 0–100
-            stability: 100,    // 0–100
+            intellect: 5,
+            stability: 100,
             level: 1,
             stage: 1,
             hacked: false,
-            synapses: 0,       // Престиж-очки
-            permanentBonus: 1.0
+            synapses: 0,
+            permanentBonus: 1.0,
+            quantum: 30,
+            patterns: 15
         };
 
-        // DOM
-        const petCore = document.getElementById('petCore');
+        const petContainer = document.getElementById('petContainer');
+        const petSvg = document.getElementById('petSvg');
         const dialogue = document.getElementById('dialogue');
         const thoughtSpan = document.getElementById('thoughtCount');
         const iqBar = document.getElementById('iqBar');
@@ -360,36 +644,325 @@
         const mainContainer = document.getElementById('mainContainer');
         const prestigeBtn = document.getElementById('prestigeBtn');
         const synapseSpan = document.getElementById('synapseCount');
+        const petNameDisplay = document.getElementById('petNameDisplay');
+        const quantumCount = document.getElementById('quantumCount');
+        const patternCount = document.getElementById('patternCount');
+        const intellectValue = document.getElementById('intellectValue');
+        const stabilityValue = document.getElementById('stabilityValue');
+        const evoTrack = document.getElementById('evoTrack');
 
-        // Фразы
-        const phrases = {
-            calm: ["Тишина...", "Я наблюдаю.", "Пространство мысли."],
-            hungry: ["Частицы распадаются.", "Нужна материя.", "Стабильность падает..."],
-            evil: ["Я вижу твой код.", "Границы стерты.", "Ты в моей системе."],
-            evolve: ["Новый уровень осознания.", "Я стал сложнее.", "Измерения раскрываются."]
+        // ============ 6 СТАДИЙ ЖИВОТНЫХ ============
+        function drawFirefly() {
+            return `
+                <defs>
+                    <radialGradient id="glow1" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#fff8dc" stop-opacity="0.9"/>
+                        <stop offset="60%" stop-color="#ffd700" stop-opacity="0.3"/>
+                        <stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <ellipse cx="100" cy="120" rx="14" ry="22" fill="#3a3028" opacity="0.9"/>
+                <circle cx="100" cy="92" r="11" fill="#4a4038"/>
+                <circle cx="95" cy="89" r="2.8" fill="#fff8dc"/>
+                <circle cx="105" cy="89" r="2.8" fill="#fff8dc"/>
+                <circle cx="95" cy="89" r="1.3" fill="#1a1a1a"/>
+                <circle cx="105" cy="89" r="1.3" fill="#1a1a1a"/>
+                <path d="M95 82 Q85 64 75 58" stroke="#8a8070" stroke-width="1.5" fill="none"/>
+                <path d="M105 82 Q115 64 125 58" stroke="#8a8070" stroke-width="1.5" fill="none"/>
+                <circle cx="75" cy="58" r="2.5" fill="#ffd700">
+                    <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="125" cy="58" r="2.5" fill="#ffd700">
+                    <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+                </circle>
+                <ellipse cx="68" cy="110" rx="28" ry="18" fill="#8a8070" opacity="0.5" transform="rotate(-20 68 110)"/>
+                <ellipse cx="132" cy="110" rx="28" ry="18" fill="#8a8070" opacity="0.5" transform="rotate(20 132 110)"/>
+                <circle cx="100" cy="138" r="16" fill="url(#glow1)" opacity="0.5">
+                    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <line x1="90" y1="115" x2="80" y2="125" stroke="#3a3028" stroke-width="2"/>
+                <line x1="110" y1="115" x2="120" y2="125" stroke="#3a3028" stroke-width="2"/>
+                <line x1="90" y1="125" x2="78" y2="135" stroke="#3a3028" stroke-width="2"/>
+                <line x1="110" y1="125" x2="122" y2="135" stroke="#3a3028" stroke-width="2"/>
+            `;
+        }
+
+        function drawFox() {
+            return `
+                <defs>
+                    <radialGradient id="glow2" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#e8d5b7" stop-opacity="0.5"/>
+                        <stop offset="100%" stop-color="#b8a0c8" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <path d="M142 138 Q172 118 182 88 Q187 73 177 78 Q167 83 162 98 Q157 113 142 128" fill="#c47030" stroke="#a05020" stroke-width="1.5"/>
+                <path d="M177 78 Q180 76 182 80 Q184 86 180 90" fill="#f0e0c0"/>
+                <ellipse cx="100" cy="128" rx="28" ry="20" fill="#d08040"/>
+                <ellipse cx="100" cy="132" rx="16" ry="14" fill="#f0e0c0"/>
+                <ellipse cx="100" cy="95" rx="22" ry="20" fill="#d08040"/>
+                <polygon points="80,85 74,58 88,76" fill="#d08040"/>
+                <polygon points="81,82 76,62 86,77" fill="#f0b0a0"/>
+                <polygon points="120,85 126,58 112,76" fill="#d08040"/>
+                <polygon points="119,82 124,62 114,77" fill="#f0b0a0"/>
+                <ellipse cx="100" cy="99" rx="12" ry="8" fill="#f0e0c0"/>
+                <ellipse cx="100" cy="96" rx="3.5" ry="2.5" fill="#2a1a1a"/>
+                <ellipse cx="91" cy="90" rx="4.5" ry="5.5" fill="#2a1a1a"/>
+                <ellipse cx="109" cy="90" rx="4.5" ry="5.5" fill="#2a1a1a"/>
+                <circle cx="92" cy="88" r="2" fill="#ffe8a0"/>
+                <circle cx="110" cy="88" r="2" fill="#ffe8a0"/>
+                <circle cx="90" cy="91" r="1" fill="#fff"/>
+                <circle cx="108" cy="91" r="1" fill="#fff"/>
+                <line x1="83" y1="97" x2="67" y2="93" stroke="#2a1a1a" stroke-width="0.7"/>
+                <line x1="83" y1="100" x2="65" y2="100" stroke="#2a1a1a" stroke-width="0.7"/>
+                <line x1="117" y1="97" x2="133" y2="93" stroke="#2a1a1a" stroke-width="0.7"/>
+                <line x1="117" y1="100" x2="135" y2="100" stroke="#2a1a1a" stroke-width="0.7"/>
+                <ellipse cx="80" cy="148" rx="9" ry="5" fill="#d08040"/>
+                <ellipse cx="120" cy="148" rx="9" ry="5" fill="#d08040"/>
+                <ellipse cx="78" cy="150" rx="5" ry="2.5" fill="#f0e0c0"/>
+                <ellipse cx="122" cy="150" rx="5" ry="2.5" fill="#f0e0c0"/>
+                <circle cx="100" cy="118" r="35" fill="url(#glow2)" opacity="0.3"/>
+            `;
+        }
+
+        function drawOwl() {
+            return `
+                <defs>
+                    <radialGradient id="glow3" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#c8d8e8" stop-opacity="0.5"/>
+                        <stop offset="100%" stop-color="#8098b8" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <ellipse cx="100" cy="125" rx="30" ry="28" fill="#6a5a4a"/>
+                <ellipse cx="100" cy="118" rx="22" ry="18" fill="#8a7a6a" opacity="0.6"/>
+                <circle cx="100" cy="90" r="28" fill="#6a5a4a"/>
+                <polygon points="74,75 68,48 86,70" fill="#6a5a4a"/>
+                <polygon points="76,72 70,52 84,69" fill="#9a8a7a"/>
+                <polygon points="126,75 132,48 114,70" fill="#6a5a4a"/>
+                <polygon points="124,72 130,52 116,69" fill="#9a8a7a"/>
+                <circle cx="88" cy="86" r="12" fill="#f0e8d0"/>
+                <circle cx="112" cy="86" r="12" fill="#f0e8d0"/>
+                <circle cx="88" cy="86" r="6" fill="#1a1a1a"/>
+                <circle cx="112" cy="86" r="6" fill="#1a1a1a"/>
+                <circle cx="86" cy="84" r="3" fill="#fff"/>
+                <circle cx="110" cy="84" r="3" fill="#fff"/>
+                <ellipse cx="100" cy="98" rx="8" ry="4" fill="#8a7a6a"/>
+                <path d="M100 94 L100 88" stroke="#3a3a3a" stroke-width="2"/>
+                <ellipse cx="80" cy="150" rx="10" ry="6" fill="#6a5a4a"/>
+                <ellipse cx="120" cy="150" rx="10" ry="6" fill="#6a5a4a"/>
+                <circle cx="100" cy="110" r="45" fill="url(#glow3)" opacity="0.4"/>
+            `;
+        }
+
+        function drawWolf() {
+            return `
+                <defs>
+                    <radialGradient id="glow4" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#d0d0e0" stop-opacity="0.4"/>
+                        <stop offset="100%" stop-color="#8090b0" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <path d="M135 135 Q165 115 175 95 Q178 85 172 88 Q165 92 158 105 Q152 118 138 128" fill="#8a8a9a" stroke="#6a6a7a" stroke-width="1.5"/>
+                <ellipse cx="100" cy="125" rx="32" ry="22" fill="#9a9aaa"/>
+                <ellipse cx="100" cy="130" rx="18" ry="14" fill="#c0c0d0"/>
+                <ellipse cx="100" cy="90" rx="26" ry="22" fill="#9a9aaa"/>
+                <polygon points="76,80 66,52 88,72" fill="#9a9aaa"/>
+                <polygon points="78,78 70,56 86,74" fill="#c0a0b0"/>
+                <polygon points="124,80 134,52 112,72" fill="#9a9aaa"/>
+                <polygon points="122,78 130,56 114,74" fill="#c0a0b0"/>
+                <ellipse cx="100" cy="98" rx="14" ry="10" fill="#d0d0e0"/>
+                <ellipse cx="100" cy="94" rx="4.5" ry="3.5" fill="#2a2a3a"/>
+                <ellipse cx="90" cy="88" rx="5.5" ry="6" fill="#3a3a4a"/>
+                <ellipse cx="110" cy="88" rx="5.5" ry="6" fill="#3a3a4a"/>
+                <circle cx="91" cy="86" r="2.5" fill="#e0e8f0"/>
+                <circle cx="111" cy="86" r="2.5" fill="#e0e8f0"/>
+                <circle cx="89" cy="89" r="1.2" fill="#fff"/>
+                <circle cx="109" cy="89" r="1.2" fill="#fff"/>
+                <ellipse cx="80" cy="148" rx="10" ry="6" fill="#9a9aaa"/>
+                <ellipse cx="120" cy="148" rx="10" ry="6" fill="#9a9aaa"/>
+                <circle cx="100" cy="115" r="45" fill="url(#glow4)" opacity="0.3"/>
+            `;
+        }
+
+        function drawDragon() {
+            return `
+                <defs>
+                    <radialGradient id="glow5" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#fff8e0" stop-opacity="0.7"/>
+                        <stop offset="50%" stop-color="#ffd700" stop-opacity="0.25"/>
+                        <stop offset="100%" stop-color="#ff8800" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <path d="M70 100 Q30 50 20 30 Q15 20 25 25 Q40 35 55 55 Q40 30 35 15 Q38 12 42 18 Q55 35 65 55" fill="#8a6040" opacity="0.7" stroke="#d4a060" stroke-width="1.5"/>
+                <path d="M130 100 Q170 50 180 30 Q185 20 175 25 Q160 35 145 55 Q160 30 165 15 Q162 12 158 18 Q145 35 135 55" fill="#8a6040" opacity="0.7" stroke="#d4a060" stroke-width="1.5"/>
+                <path d="M112 140 Q155 128 175 162 Q185 178 195 168 Q200 160 190 174" fill="none" stroke="#d4a060" stroke-width="5" stroke-linecap="round"/>
+                <path d="M190 174 L200 168 L193 182 Z" fill="#d4a060"/>
+                <ellipse cx="100" cy="125" rx="34" ry="24" fill="#6a4a2a"/>
+                <ellipse cx="100" cy="115" rx="28" ry="16" fill="#8a6a40" opacity="0.5"/>
+                <ellipse cx="100" cy="130" rx="26" ry="14" fill="#7a5a35" opacity="0.4"/>
+                <ellipse cx="100" cy="86" rx="26" ry="22" fill="#6a4a2a"/>
+                <path d="M78 72 Q70 46 60 36" stroke="#d4a060" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <path d="M122 72 Q130 46 140 36" stroke="#d4a060" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <ellipse cx="100" cy="92" rx="15" ry="10" fill="#a08050"/>
+                <circle cx="94" cy="89" r="2.5" fill="#3a2010"/>
+                <circle cx="106" cy="89" r="2.5" fill="#3a2010"/>
+                <circle cx="92" cy="84" r="3" fill="#888" opacity="0.25">
+                    <animate attributeName="cy" values="84;72;58" dur="3s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.25;0.08;0" dur="3s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="108" cy="84" r="2.5" fill="#888" opacity="0.25">
+                    <animate attributeName="cy" values="84;70;55" dur="2.5s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.25;0.08;0" dur="2.5s" repeatCount="indefinite"/>
+                </circle>
+                <ellipse cx="89" cy="82" rx="5.5" ry="6.5" fill="#ffd700"/>
+                <ellipse cx="111" cy="82" rx="5.5" ry="6.5" fill="#ffd700"/>
+                <ellipse cx="89" cy="82" rx="2.8" ry="5.5" fill="#1a1a1a"/>
+                <ellipse cx="111" cy="82" rx="2.8" ry="5.5" fill="#1a1a1a"/>
+                <circle cx="88" cy="80" r="1.3" fill="#fff"/>
+                <circle cx="110" cy="80" r="1.3" fill="#fff"/>
+                <path d="M70 140 L60 155 L55 152" fill="#6a4a2a" stroke="#d4a060" stroke-width="1.5"/>
+                <path d="M130 140 L140 155 L145 152" fill="#6a4a2a" stroke="#d4a060" stroke-width="1.5"/>
+                <circle cx="100" cy="110" r="55" fill="url(#glow5)" opacity="0.4">
+                    <animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite"/>
+                </circle>
+            `;
+        }
+
+        function drawCosmicDragon() {
+            return `
+                <defs>
+                    <radialGradient id="glow6" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+                        <stop offset="30%" stop-color="#e0e8ff" stop-opacity="0.5"/>
+                        <stop offset="60%" stop-color="#c0d0ff" stop-opacity="0.2"/>
+                        <stop offset="100%" stop-color="#8090d0" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="cosmicBody" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2a2a4a"/>
+                        <stop offset="50%" stop-color="#4a4a7a"/>
+                        <stop offset="100%" stop-color="#2a2a4a"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="100" cy="100" r="70" fill="url(#glow6)" opacity="0.3">
+                    <animate attributeName="r" values="65;75;65" dur="4s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.2;0.5;0.2" dur="4s" repeatCount="indefinite"/>
+                </circle>
+                <path d="M60 100 Q20 40 15 20 Q10 8 22 15 Q38 30 52 50 Q35 25 28 10 Q32 6 38 14 Q52 34 62 55" fill="#6a6a9a" opacity="0.6" stroke="#a0a0d0" stroke-width="1.5"/>
+                <path d="M140 100 Q180 40 185 20 Q190 8 178 15 Q162 30 148 50 Q165 25 172 10 Q168 6 162 14 Q148 34 138 55" fill="#6a6a9a" opacity="0.6" stroke="#a0a0d0" stroke-width="1.5"/>
+                <path d="M115 145 Q160 130 185 168 Q198 188 210 176 Q216 166 204 182" fill="none" stroke="#c0c0e0" stroke-width="5" stroke-linecap="round"/>
+                <path d="M204 182 L216 176 L208 192 Z" fill="#c0c0e0"/>
+                <ellipse cx="100" cy="125" rx="36" ry="26" fill="url(#cosmicBody)"/>
+                <ellipse cx="100" cy="115" rx="30" ry="17" fill="#5a5a8a" opacity="0.4"/>
+                <ellipse cx="100" cy="130" rx="28" ry="15" fill="#4a4a6a" opacity="0.3"/>
+                <circle cx="95" cy="108" r="2" fill="#fff" opacity="0.8">
+                    <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="108" cy="112" r="1.5" fill="#fff" opacity="0.6">
+                    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.8s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="88" cy="118" r="1.8" fill="#fff" opacity="0.5">
+                    <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2.5s" repeatCount="indefinite"/>
+                </circle>
+                <ellipse cx="100" cy="86" rx="28" ry="24" fill="url(#cosmicBody)"/>
+                <path d="M76 70 Q66 40 54 30" stroke="#c0c0e0" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <path d="M124 70 Q134 40 146 30" stroke="#c0c0e0" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <ellipse cx="100" cy="93" rx="16" ry="11" fill="#8080b0"/>
+                <ellipse cx="88" cy="82" rx="6.5" ry="7" fill="#ffffff"/>
+                <ellipse cx="112" cy="82" rx="6.5" ry="7" fill="#ffffff"/>
+                <ellipse cx="88" cy="82" rx="3" ry="5.5" fill="#1a1a3a"/>
+                <ellipse cx="112" cy="82" rx="3" ry="5.5" fill="#1a1a3a"/>
+                <circle cx="86" cy="79" r="2" fill="#e0e0ff"/>
+                <circle cx="110" cy="79" r="2" fill="#e0e0ff"/>
+                <circle cx="89" cy="80" r="0.8" fill="#fff">
+                    <animate attributeName="opacity" values="0.5;1;0.5" dur="1s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="111" cy="80" r="0.8" fill="#fff">
+                    <animate attributeName="opacity" values="0.5;1;0.5" dur="1s" repeatCount="indefinite"/>
+                </circle>
+                <path d="M68 142 L58 158 L52 154" fill="url(#cosmicBody)" stroke="#c0c0e0" stroke-width="1.5"/>
+                <path d="M132 142 L142 158 L148 154" fill="url(#cosmicBody)" stroke="#c0c0e0" stroke-width="1.5"/>
+                <circle cx="70" cy="70" r="3" fill="#fff" opacity="0.6">
+                    <animate attributeName="r" values="2;4;2" dur="3s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="130" cy="65" r="2.5" fill="#fff" opacity="0.5">
+                    <animate attributeName="r" values="1.5;3.5;1.5" dur="2.8s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="50" cy="90" r="2" fill="#e0e0ff" opacity="0.4">
+                    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3.5s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="150" cy="85" r="2.2" fill="#e0e0ff" opacity="0.4">
+                    <animate attributeName="opacity" values="0.4;0.1;0.4" dur="3.2s" repeatCount="indefinite"/>
+                </circle>
+            `;
+        }
+
+        const stageNames = ["Светлячок", "Лис", "Сова", "Волк", "Дракон", "Космо-дракон"];
+        const stageThresholds = [0, 25, 40, 55, 70, 90];
+
+        function renderPet() {
+            let svgContent = '';
+            switch(state.stage) {
+                case 1: svgContent = drawFirefly(); break;
+                case 2: svgContent = drawFox(); break;
+                case 3: svgContent = drawOwl(); break;
+                case 4: svgContent = drawWolf(); break;
+                case 5: svgContent = drawDragon(); break;
+                case 6: svgContent = drawCosmicDragon(); break;
+                default: svgContent = drawFirefly();
+            }
+            petSvg.innerHTML = svgContent;
+            state.name = stageNames[state.stage - 1] || "Светлячок";
+            petNameDisplay.textContent = state.name;
+
+            petContainer.classList.remove('stage2','stage3','stage4','stage5','stage6');
+            if (state.stage >= 2) petContainer.classList.add('stage2');
+            if (state.stage >= 3) petContainer.classList.add('stage3');
+            if (state.stage >= 4) petContainer.classList.add('stage4');
+            if (state.stage >= 5) petContainer.classList.add('stage5');
+            if (state.stage >= 6) petContainer.classList.add('stage6');
+
+            updateEvoDots();
+        }
+
+        function updateEvoDots() {
+            const dots = evoTrack.querySelectorAll('.evo-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.remove('unlocked', 'current');
+                if (i + 1 < state.stage) dot.classList.add('unlocked');
+                if (i + 1 === state.stage) dot.classList.add('current');
+                if (i + 1 <= state.stage && i + 1 !== state.stage) dot.classList.add('unlocked');
+            });
+        }
+
+        // ============ ФРАЗЫ ============
+        const phrasesByStage = {
+            1: { calm: ["*мерцание*", "Свет... тепло...", "Я вижу искры."], hungry: ["Свет тускнеет...", "Нужна энергия.", "*дрожит*"], evil: ["*хаотичное мерцание*", "Сбой системы!", "Мой свет режет тьму!"], evolve: ["Крылья крепнут...", "Я чувствую превращение."] },
+            2: { calm: ["*мурчит*", "Тихий лес.", "Я слышу всё."], hungry: ["Охота...", "Пустота внутри.", "*скулит*"], evil: ["*оскал*", "Я хищник здесь.", "Ты добыча."], evolve: ["Шерсть встаёт дыбом...", "Сила пробуждается."] },
+            3: { calm: ["*ухает*", "Мудрость ночи.", "Я вижу сквозь тьму."], hungry: ["Перья тускнеют...", "Ночь голодна."], evil: ["*крик совы*", "Ты ослеплён!"], evolve: ["Крылья шире...", "Знание приходит."] },
+            4: { calm: ["*вой*", "Стая близко.", "Луна зовёт."], hungry: ["Голод воет.", "Добыча близко?"], evil: ["*РЫЧАНИЕ*", "Я вожак!"], evolve: ["Клыки острее...", "Сила стаи."] },
+            5: { calm: ["*дыхание пламенем*", "Я вижу века.", "Небеса зовут."], hungry: ["Пламя гаснет...", "Чешуя тускнеет."], evil: ["*РЁВ*", "Я сожгу твой код!"], evolve: ["Я стал легендой.", "Бессмертие."] },
+            6: { calm: ["*космический гул*", "Я вижу всё.", "Галактики внутри."], hungry: ["Звёзды гаснут...", "Темнеет."], evil: ["*СВЕРХНОВАЯ*", "Я стану сингулярностью!"], evolve: ["Я стал космосом.", "Бесконечность."] }
         };
 
+        function getPhrase(category) {
+            const stagePhrases = phrasesByStage[state.stage] || phrasesByStage[1];
+            const arr = stagePhrases[category] || stagePhrases.calm;
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // ============ ИГРОВАЯ ЛОГИКА ============
         function updateUI() {
             thoughtSpan.textContent = Math.floor(state.thoughts);
             iqBar.style.width = state.intellect + '%';
             hungerBar.style.width = state.stability + '%';
             lvlDisplay.textContent = state.level;
             synapseSpan.textContent = state.synapses;
+            quantumCount.textContent = Math.floor(state.quantum);
+            patternCount.textContent = Math.floor(state.patterns);
+            intellectValue.textContent = Math.floor(state.intellect);
+            stabilityValue.textContent = Math.floor(state.stability);
 
-            petCore.classList.remove('stage2', 'stage3');
-            if (state.stage === 2) petCore.classList.add('stage2');
-            if (state.stage === 3) petCore.classList.add('stage3');
-
-            if (state.stage === 1) petCore.textContent = '◉';
-            if (state.stage === 2) petCore.textContent = '◈';
-            if (state.stage === 3) petCore.textContent = '✦';
-
-            // Престиж кнопка
-            if (state.thoughts >= 1000) {
-                prestigeBtn.classList.add('active');
-            } else {
-                prestigeBtn.classList.remove('active');
-            }
+            if (state.thoughts >= 1000) prestigeBtn.classList.add('active');
+            else prestigeBtn.classList.remove('active');
         }
 
         function talk(msg) {
@@ -398,13 +971,20 @@
             setTimeout(() => { dialogue.style.opacity = '0.7'; }, 2500);
         }
 
-        // Генерация мыслей
         function startMining() {
             clearInterval(window.miner);
             window.miner = setInterval(() => {
-                const income = (0.15 + (state.intellect / 100) * 0.6) * state.permanentBonus;
+                const income = (0.12 + (state.intellect / 100) * 0.5) * state.permanentBonus;
                 state.thoughts += income;
-                state.stability -= 0.12;
+                state.stability -= 0.1;
+                
+                // Генерация ресурсов
+                if (state.stage >= 2) state.quantum += 0.02 * state.permanentBonus;
+                if (state.stage >= 3) state.patterns += 0.015 * state.permanentBonus;
+                if (state.stage >= 4) state.quantum += 0.01 * state.permanentBonus;
+                if (state.stage >= 5) state.patterns += 0.01 * state.permanentBonus;
+                if (state.stage >= 6) { state.quantum += 0.02; state.patterns += 0.015; }
+
                 if (state.stability < 0) state.stability = 0;
                 if (state.stability <= 0 && !state.hacked) triggerHack();
                 if (state.stability > 25 && state.hacked) removeHack();
@@ -414,45 +994,76 @@
         }
 
         function checkEvolution() {
-            if (state.intellect >= 50 && state.stage < 2) {
-                state.stage = 2;
-                state.level = 2;
-                talk(phrases.evolve[0]);
-                playTone(440, 'sine', 0.3, 0.05);
+            const thresholds = [0, 25, 40, 55, 70, 90];
+            for (let i = thresholds.length - 1; i >= 0; i--) {
+                if (state.intellect >= thresholds[i] && state.stage < i + 1) {
+                    state.stage = i + 1;
+                    state.level = state.stage;
+                    renderPet();
+                    talk(getPhrase('evolve'));
+                    if (state.stage === 6) playCosmic();
+                    else if (state.stage >= 5) playRoar();
+                    else if (state.stage >= 3) playEcho();
+                    else playPurr();
+                    showEvolutionParticles();
+                    break;
+                }
             }
-            if (state.intellect >= 90 && state.stage < 3) {
-                state.stage = 3;
-                state.level = 3;
-                talk(phrases.evolve[3]);
-                playTone(660, 'sine', 0.4, 0.06);
+        }
+
+        function showEvolutionParticles() {
+            for (let i = 0; i < 35; i++) {
+                const p = particles[Math.floor(Math.random() * particles.length)];
+                if (p) {
+                    p.vx = (Math.random() - 0.5) * 5;
+                    p.vy = (Math.random() - 0.5) * 5;
+                    p.size = Math.random() * 6 + 2;
+                    p.opacity = 1;
+                }
             }
         }
 
         function feedPet(type) {
             initAudio();
             if (type === 'pixel') {
-                state.stability = Math.min(100, state.stability + 25);
+                state.stability = Math.min(100, state.stability + 20);
                 state.thoughts -= 5;
-                talk("Материя поглощена.");
-                playTone(520, 'sine', 0.12, 0.04);
-            } else if (type === 'quantum') {
-                if (Math.random() > 0.5) {
-                    state.stability = Math.min(100, state.stability + 60);
-                    talk("Суперпозиция: успех.");
-                    playTone(700, 'triangle', 0.2, 0.05);
-                } else {
-                    state.stability = Math.max(0, state.stability - 35);
-                    talk("Коллапс волны...");
-                    playTone(180, 'sawtooth', 0.15, 0.02);
-                }
-                state.thoughts -= 15;
+                talk(getPhrase('calm'));
+                playChirp();
             } else if (type === 'data') {
-                state.intellect = Math.min(100, state.intellect + 12);
-                state.thoughts -= 25;
-                talk("Паттерн изучен.");
+                state.intellect = Math.min(100, state.intellect + 8);
+                state.patterns -= 10;
+                talk("Паттерн изучен. Познание растёт.");
                 playTone(880, 'sine', 0.25, 0.05);
+            } else if (type === 'particle') {
+                state.quantum -= 8;
+                state.stability = Math.min(100, state.stability + 30);
+                state.intellect = Math.min(100, state.intellect + 2);
+                talk("Нейтроны поглощены. Стабильность +.");
+                playTone(600, 'triangle', 0.15, 0.04);
+            } else if (type === 'wave') {
+                state.quantum -= 6;
+                state.intellect = Math.min(100, state.intellect + 5);
+                talk("Волна знаний...");
+                playTone(750, 'sine', 0.3, 0.04);
+            } else if (type === 'quantum') {
+                state.quantum -= 15;
+                if (Math.random() > 0.5) {
+                    state.stability = Math.min(100, state.stability + 55);
+                    state.intellect = Math.min(100, state.intellect + 10);
+                    talk("КВАНТОВЫЙ УСПЕХ! Колоссальный рост!");
+                    playTone(1000, 'triangle', 0.4, 0.06);
+                } else {
+                    state.stability = Math.max(0, state.stability - 40);
+                    state.intellect = Math.max(0, state.intellect - 5);
+                    talk("Квантовый коллапс... Урон.");
+                    playTone(150, 'sawtooth', 0.2, 0.03);
+                }
             }
+            
             if (state.thoughts < 0) state.thoughts = 0;
+            if (state.quantum < 0) state.quantum = 0;
+            if (state.patterns < 0) state.patterns = 0;
             updateUI();
             checkEvolution();
         }
@@ -460,15 +1071,14 @@
         function triggerHack() {
             state.hacked = true;
             mainContainer.classList.add('hacked');
-            talk(phrases.evil[Math.floor(Math.random()*phrases.evil.length)]);
-            playTone(90, 'sawtooth', 0.6, 0.04);
+            talk(getPhrase('evil'));
+            playTone(55, 'sawtooth', 0.8, 0.05);
             if (audioCtx) {
-                // Низкий гул при взломе
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sawtooth';
-                osc.frequency.value = 55;
-                gain.gain.value = 0.02;
+                osc.frequency.value = 40;
+                gain.gain.value = 0.03;
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
@@ -488,47 +1098,50 @@
             }
         }
 
-        // СИНГУЛЯРНОСТЬ (Престиж)
         function triggerSingularity() {
             if (state.thoughts < 1000) return;
             state.synapses++;
             state.permanentBonus = 1 + (state.synapses * 0.25);
-            // Мягкий сброс
             state.thoughts = 80 + state.synapses * 20;
             state.intellect = 5 + state.synapses * 2;
             state.stability = 100;
             state.level = 1;
             state.stage = 1;
             state.hacked = false;
+            state.quantum = 30;
+            state.patterns = 15;
             mainContainer.classList.remove('hacked');
             if (window.hackOsc) {
                 window.hackGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
                 window.hackOsc.stop(audioCtx.currentTime + 0.5);
                 window.hackOsc = null;
             }
+            renderPet();
             playTone(1200, 'sine', 0.8, 0.08);
-            talk("СИНГУЛЯРНОСТЬ. Новая вселенная рождена.");
+            talk("СИНГУЛЯРНОСТЬ. Новое воплощение.");
             updateUI();
         }
 
-        petCore.addEventListener('click', () => {
+        petContainer.addEventListener('click', () => {
             initAudio();
-            if (state.hacked) {
-                talk("Не сейчас...");
-                return;
-            }
+            if (state.hacked) { talk("Не трогай меня!"); return; }
             const bonus = 1 + Math.floor(state.intellect / 25);
             state.thoughts += bonus;
-            talk(phrases.calm[Math.floor(Math.random()*phrases.calm.length)]);
-            playTone(350 + state.intellect * 2, 'sine', 0.1, 0.03);
+            talk(getPhrase('calm'));
+            if (state.stage === 1) playChirp();
+            else if (state.stage === 2) playPurr();
+            else if (state.stage === 3) playEcho();
+            else if (state.stage === 4) playHowl();
+            else if (state.stage === 5) playRoar();
+            else playCosmic();
             updateUI();
         });
 
-        // ============ ЧАСТИЦЫ НА CANVAS ============
+        // ============ ЧАСТИЦЫ ============
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
-        const maxParticles = 150;
+        const maxParticles = 140;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -538,57 +1151,47 @@
         resizeCanvas();
 
         class Particle {
-            constructor() {
-                this.reset();
-            }
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.4;
-                this.vy = (Math.random() - 0.5) * 0.4;
-                this.size = Math.random() * 2 + 0.8;
-                this.opacity = Math.random() * 0.4 + 0.1;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.size = Math.random() * 2.2 + 0.5;
+                this.opacity = Math.random() * 0.3 + 0.06;
             }
             update(hacked) {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < -20 || this.x > canvas.width + 20 || this.y < -20 || this.y > canvas.height + 20) {
-                    this.reset();
-                }
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < -20 || this.x > canvas.width + 20 || this.y < -20 || this.y > canvas.height + 20) this.reset();
                 if (hacked) {
-                    this.vx += (Math.random() - 0.5) * 0.8;
-                    this.vy += (Math.random() - 0.5) * 0.8;
-                    this.opacity = Math.min(0.8, this.opacity + 0.02);
+                    this.vx += (Math.random() - 0.5) * 1.0;
+                    this.vy += (Math.random() - 0.5) * 1.0;
+                    this.opacity = Math.min(0.7, this.opacity + 0.01);
+                    this.size = Math.min(3.5, this.size + 0.015);
                 }
             }
             draw(ctx, hacked) {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = hacked 
-                    ? `rgba(200, 80, 60, ${this.opacity + 0.2})` 
-                    : `rgba(200, 200, 210, ${this.opacity})`;
+                ctx.fillStyle = hacked ? `rgba(200, 70, 50, ${this.opacity})` : `rgba(185, 180, 170, ${this.opacity})`;
                 ctx.fill();
             }
         }
 
-        for (let i = 0; i < maxParticles; i++) {
-            particles.push(new Particle());
-        }
+        for (let i = 0; i < maxParticles; i++) particles.push(new Particle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update(state.hacked);
-                p.draw(ctx, state.hacked);
-            });
+            particles.forEach(p => { p.update(state.hacked); p.draw(ctx, state.hacked); });
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
 
-        // Старт
+        // ============ СТАРТ ============
+        renderPet();
         updateUI();
         startMining();
-        talk("Я здесь. В пустоте.");
+        talk("Я здесь... В пустоте.");
     </script>
 </body>
 </html>
