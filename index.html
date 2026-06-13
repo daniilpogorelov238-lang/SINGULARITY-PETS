@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SINGULARITY PETS</title>
+    <title>SINGULARITY PETS // Deep Void: Ultimate</title>
     <meta name="description" content="Симулятор ИИ-питомца с глубокой системой эволюции. Вырасти своего цифрового компаньона от светлячка до космического дракона.">
     <meta name="author" content="Singularity Pets Collective">
     <meta name="copyright" content="© 2024 Singularity Pets. Все права защищены. Распространяется под лицензией Custom Limited Use License.">
@@ -42,9 +42,9 @@
             position: relative;
             z-index: 10;
             width: 92%;
-            max-width: 460px;
-            height: 90vh;
-            max-height: 750px;
+            max-width: 480px;
+            height: 92vh;
+            max-height: 800px;
             background: rgba(18, 18, 22, 0.85);
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
@@ -53,14 +53,26 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.03);
             display: flex;
             flex-direction: column;
-            padding: 20px 20px 16px;
-            transition: border-color 0.8s ease, box-shadow 0.8s ease;
+            padding: 18px 18px 14px;
+            transition: all 0.8s ease;
             overflow-y: auto;
         }
 
         .hacked .main-container {
             border-color: rgba(180, 40, 40, 0.4);
             box-shadow: 0 0 80px rgba(180, 40, 40, 0.15), inset 0 0 20px rgba(180,40,40,0.08);
+            animation: shake 0.08s infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-1px, 1px); }
+            75% { transform: translate(1px, -1px); }
+        }
+
+        .god-mode .main-container {
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 120px rgba(255, 215, 0, 0.2), inset 0 0 40px rgba(255,215,0,0.05);
         }
 
         .status-row {
@@ -70,8 +82,8 @@
             font-size: 14px;
             font-weight: 500;
             color: #999;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
             border-bottom: 1px solid rgba(255,255,255,0.05);
             flex-shrink: 0;
         }
@@ -95,13 +107,13 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            margin: 8px 0;
-            min-height: 220px;
+            margin: 6px 0;
+            min-height: 200px;
         }
 
         .pet-svg-container {
-            width: 170px;
-            height: 170px;
+            width: 160px;
+            height: 160px;
             cursor: pointer;
             transition: transform 0.1s ease;
             filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
@@ -125,7 +137,7 @@
         .pet-svg-container.stage6 svg { filter: drop-shadow(0 0 35px rgba(255, 220, 180, 0.7)); }
 
         .dialogue {
-            margin-top: 12px;
+            margin-top: 10px;
             font-size: 14px;
             color: #aaa;
             text-align: center;
@@ -140,7 +152,7 @@
             display: flex;
             gap: 6px;
             justify-content: center;
-            margin: 8px 0;
+            margin: 6px 0;
             flex-shrink: 0;
         }
 
@@ -150,6 +162,7 @@
             border-radius: 50%;
             background: rgba(255,255,255,0.1);
             transition: all 0.5s;
+            cursor: pointer;
         }
 
         .evo-dot.unlocked {
@@ -171,16 +184,16 @@
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 10px 0;
+            gap: 8px;
+            margin: 8px 0;
             flex-shrink: 0;
         }
 
         .stat-card {
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 18px;
-            padding: 12px 14px;
+            border-radius: 16px;
+            padding: 10px 12px;
         }
 
         .stat-label {
@@ -188,12 +201,12 @@
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: #666;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 500;
         }
 
         .stat-value {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: #ddd;
             letter-spacing: 0.02em;
@@ -214,28 +227,27 @@
 
         .progress-fill.intellect { background: #b8a9c9; }
         .progress-fill.hunger { background: #c9b8a9; }
-        .progress-fill.quantum { background: #a9c9b8; }
-        .progress-fill.pattern { background: #c9a9b8; }
 
         .resource-row {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
+            margin-bottom: 4px;
         }
 
         .resource-chip {
             flex: 1;
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 14px;
-            padding: 8px 6px;
+            border-radius: 12px;
+            padding: 6px 4px;
             text-align: center;
-            font-size: 11px;
+            font-size: 10px;
             color: #888;
         }
 
         .resource-chip .value {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: #ccc;
             display: block;
@@ -244,8 +256,8 @@
         .action-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 6px;
+            gap: 6px;
+            margin-top: 4px;
             flex-shrink: 0;
         }
 
@@ -253,9 +265,9 @@
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.06);
             color: #ccc;
-            padding: 12px 8px;
+            padding: 10px 6px;
             border-radius: 100px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
@@ -263,7 +275,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             letter-spacing: 0.02em;
             position: relative;
         }
@@ -279,15 +291,15 @@
         }
 
         .action-btn .emoji {
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .action-btn .cost {
-            font-size: 9px;
+            font-size: 8px;
             color: #555;
             position: absolute;
-            bottom: 4px;
-            right: 12px;
+            bottom: 3px;
+            right: 10px;
         }
 
         .action-btn.quantum-btn {
@@ -296,23 +308,28 @@
             border-color: rgba(160, 200, 180, 0.15);
         }
 
-        .prestige-btn {
-            width: 100%;
-            margin-top: 8px;
+        .button-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .prestige-btn, .code-btn {
+            flex: 1;
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.08);
             color: #888;
-            padding: 12px;
+            padding: 10px;
             border-radius: 100px;
-            font-size: 12px;
+            font-size: 11px;
             letter-spacing: 0.06em;
             cursor: pointer;
             transition: 0.3s;
             text-align: center;
-            flex-shrink: 0;
         }
 
-        .prestige-btn.active:hover {
+        .prestige-btn.active:hover, .code-btn:hover {
             background: rgba(200,180,140,0.08);
             color: #ddd;
             border-color: rgba(200,180,140,0.2);
@@ -322,21 +339,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
-            margin-top: 6px;
+            gap: 8px;
+            margin-top: 4px;
             font-size: 9px;
             color: #444;
             letter-spacing: 0.04em;
             flex-shrink: 0;
         }
 
-        .license-bar a {
+        .license-bar a, .rights-badge {
             color: #666;
             text-decoration: none;
+            cursor: pointer;
             transition: color 0.3s;
         }
 
-        .license-bar a:hover {
+        .license-bar a:hover, .rights-badge:hover {
             color: #aaa;
         }
 
@@ -344,23 +362,15 @@
             background: rgba(255,255,255,0.03);
             padding: 3px 8px;
             border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .rights-badge:hover {
-            background: rgba(255,255,255,0.08);
-            color: #aaa;
-        }
-
-        /* Модальное окно прав */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             z-index: 100;
             display: none;
             justify-content: center;
@@ -396,6 +406,24 @@
             color: #999;
         }
 
+        .modal-box input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            letter-spacing: 0.1em;
+            margin: 8px 0;
+            outline: none;
+            text-transform: uppercase;
+        }
+
+        .modal-box input:focus {
+            border-color: rgba(200,180,140,0.4);
+        }
+
         .modal-box button {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -403,12 +431,50 @@
             padding: 10px 20px;
             border-radius: 100px;
             cursor: pointer;
-            margin-top: 12px;
+            margin-top: 8px;
             transition: all 0.3s;
+            margin-right: 6px;
         }
 
         .modal-box button:hover {
             background: rgba(255,255,255,0.1);
+        }
+
+        .modal-box .error-msg {
+            color: #e05050;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .modal-box .success-msg {
+            color: #50e050;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .achievement-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a20;
+            border: 1px solid rgba(200,180,140,0.3);
+            color: #ddd;
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-size: 13px;
+            z-index: 200;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            animation: toastIn 0.5s ease-out;
+            letter-spacing: 0.04em;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
         @keyframes float {
@@ -428,31 +494,58 @@
         .hacked .pet-svg-container {
             animation: float 1s ease-in-out infinite, breathe 0.8s ease-in-out infinite;
         }
+
+        .easter-egg-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 150;
+            animation: eggBurst 2s ease-out forwards;
+            font-size: 24px;
+        }
+
+        @keyframes eggBurst {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+        }
     </style>
 </head>
 <body>
     <canvas id="particleCanvas"></canvas>
+    <div class="achievement-toast" id="achievementToast"></div>
 
     <!-- Модальное окно прав -->
     <div class="modal-overlay" id="rightsModal">
         <div class="modal-box">
             <h2>⚖️ Права и лицензия</h2>
             <p><strong>Singularity Pets</strong></p>
-            <p>© 2024 Singularity Pets Collective. Все права защищены.</p>
-            <p>Данное программное обеспечение распространяется под лицензией <strong>HopeGopeTop</strong>.</p>
-            <p><strong>Разрешено:</strong></p>
-            <p>• Личное некоммерческое использование<br>
-               • Изучение кода в образовательных целях<br>
-               • Модификация для личного пользования<br>
-               • Распространение с указанием авторства (некоммерческое)</p>
-            <p><strong>Запрещено:</strong></p>
-            <p>• Коммерческое использование без письменного разрешения<br>
-               • Удаление или изменение информации об авторстве<br>
-               • Использование в составе платных продуктов<br>
-               • Создание производных работ с целью продажи</p>
+            <p>© 2026 Singularity Pets Collective. Все права защищены.</p>
+            <p>Данное программное обеспечение распространяется под лицензией <strong>Custom Limited Use License (CLUL)</strong>.</p>
+            <p><strong>Разрешено:</strong><br>
+            • Личное некоммерческое использование<br>
+            • Изучение кода в образовательных целях<br>
+            • Модификация для личного пользования<br>
+            • Распространение с указанием авторства (некоммерческое)</p>
+            <p><strong>Запрещено:</strong><br>
+            • Коммерческое использование без письменного разрешения<br>
+            • Удаление или изменение информации об авторстве<br>
+            • Использование в составе платных продуктов<br>
+            • Создание производных работ с целью продажи</p>
             <p><strong>Гарантии:</strong> ПО предоставляется "как есть". Авторы не несут ответственности за любой ущерб.</p>
-            <p>По вопросам коммерческого использования: <span style="color:#888;">kreatin53@gmail.com</span></p>
             <button onclick="closeRightsModal()">Понятно</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно кодов -->
+    <div class="modal-overlay" id="codeModal">
+        <div class="modal-box">
+            <h2>🔐 Ввод кода создателя</h2>
+            <p>Введите секретный код для активации особых возможностей.</p>
+            <input type="text" id="codeInput" placeholder="ВВЕДИТЕ КОД..." maxlength="20" autocomplete="off">
+            <div class="error-msg" id="codeError">Неверный код. Попробуйте ещё раз.</div>
+            <div class="success-msg" id="codeSuccess">Код активирован!</div>
+            <button onclick="submitCode()">Активировать</button>
+            <button onclick="closeCodeModal()">Закрыть</button>
+            <p style="font-size:10px;color:#555;margin-top:12px;">Подсказка: коды спрятаны в игре...</p>
         </div>
     </div>
 
@@ -506,6 +599,10 @@
                 ✦ Уровень
                 <span class="value" id="lvlDisplay">1</span>
             </div>
+            <div class="resource-chip">
+                💎 Души
+                <span class="value" id="soulCount">0</span>
+            </div>
         </div>
 
         <div class="action-row">
@@ -531,30 +628,34 @@
             </button>
         </div>
 
-        <button class="prestige-btn" id="prestigeBtn" onclick="triggerSingularity()">
-            СИНГУЛЯРНОСТЬ (1000 ◈) — нейросвязей: <span id="synapseCount">0</span>
-        </button>
+        <div class="button-row">
+            <button class="prestige-btn" id="prestigeBtn" onclick="triggerSingularity()">
+                СИНГУЛЯРНОСТЬ (1000◈)
+            </button>
+            <button class="code-btn" onclick="openCodeModal()">
+                🔐 Код
+            </button>
+        </div>
 
         <div class="license-bar">
-            <span>© 2024 Singularity Pets</span>
+            <span>© 2026 Singularity Pets</span>
             <span class="rights-badge" onclick="openRightsModal()">⚖️ Права</span>
-            <a href="#" onclick="openRightsModal(); return false;">Лицензия CLUL</a>
+            <span style="color:#444;">Нейросвязей: <span id="synapseCount">0</span></span>
         </div>
     </div>
 
     <script>
         // ============ ЗАЩИТА ПРАВ ============
-        console.log("%c Singularity Pets %c v2.0 ",
+        console.log("%c Singularity Pets6 %c v3.0 ",
             "background:#1a1a20;color:#ddd;padding:8px;border-radius:4px 0 0 4px;",
             "background:#333;color:#aaa;padding:8px;border-radius:0 4px 4px 0;");
-        console.log("%c © 2024 Singularity Pets Collective. Все права защищены. ",
+        console.log("%c © 2026 Singularity Pets Collective. Все права защищены. ",
             "color:#666;font-size:11px;");
-        console.log("%c Лицензия: HopeGopeTop (HGT) ( ",
+        console.log("%c Лицензия: Custom Limited Use License (CLUL) ",
             "color:#888;font-size:10px;");
-        console.log("%c Защита от несанкционированного копирования активна.",
-            "color:#444;font-size:9px;");
+        console.log("%c Подсказка: Введи HELLO в кодовом меню ;)",
+            "color:#333;font-size:9px;");
 
-        // Защита от копирования (базовая)
         document.addEventListener('copy', function(e) {
             const selection = window.getSelection().toString();
             if (selection.length > 200) {
@@ -565,7 +666,6 @@
             }
         });
 
-        // Защита от сохранения страницы
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                 e.preventDefault();
@@ -574,19 +674,114 @@
             }
         });
 
-        function openRightsModal() {
-            document.getElementById('rightsModal').classList.add('show');
-        }
-
-        function closeRightsModal() {
-            document.getElementById('rightsModal').classList.remove('show');
-        }
-
-        // Закрытие модального окна по клику вне его
+        function openRightsModal() { document.getElementById('rightsModal').classList.add('show'); }
+        function closeRightsModal() { document.getElementById('rightsModal').classList.remove('show'); }
         document.getElementById('rightsModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeRightsModal();
+            if (e.target === this) closeRightsModal();
+        });
+
+        function openCodeModal() { 
+            document.getElementById('codeModal').classList.add('show');
+            document.getElementById('codeInput').value = '';
+            document.getElementById('codeError').style.display = 'none';
+            document.getElementById('codeSuccess').style.display = 'none';
+            setTimeout(() => document.getElementById('codeInput').focus(), 100);
+        }
+        function closeCodeModal() { document.getElementById('codeModal').classList.remove('show'); }
+        document.getElementById('codeModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCodeModal();
+        });
+
+        // ============ СИСТЕМА КОДОВ ============
+        const codes = {
+            'HELLO': { 
+                effect: () => { state.thoughts += 500; state.quantum += 100; state.patterns += 50; },
+                message: 'КОД HELLO: +500 мыслей, +100 квантов, +50 паттернов!'
+            },
+            'SINGULARITY': { 
+                effect: () => { state.synapses += 1; state.permanentBonus = 1 + (state.synapses * 0.25); },
+                message: 'КОД SINGULARITY: +1 нейросвязь!'
+            },
+            'GODMODE': { 
+                effect: () => { 
+                    state.intellect = 100; 
+                    state.stability = 100; 
+                    state.thoughts += 5000; 
+                    state.quantum += 500; 
+                    state.patterns += 200;
+                    state.godMode = true;
+                    document.getElementById('mainContainer').classList.add('god-mode');
+                    setTimeout(() => document.getElementById('mainContainer').classList.remove('god-mode'), 3000);
+                },
+                message: 'КОД GODMODE: ВСЁ МАКСИМУМ! Божественный режим!'
+            },
+            'MOONLIGHT': { 
+                effect: () => { 
+                    state.stage = 6; 
+                    state.intellect = 95; 
+                    state.level = 6;
+                    renderPet();
+                    checkEvolution();
+                },
+                message: 'КОД MOONLIGHT: Мгновенная эволюция до Космо-дракона!'
+            },
+            'VOIDWALKER': { 
+                effect: () => { 
+                    state.souls += 10;
+                    spawnEasterEggs('👻', 20);
+                },
+                message: 'КОД VOIDWALKER: +10 душ! Призраки вокруг!'
+            },
+            'QUANTUM': { 
+                effect: () => { 
+                    state.quantum += 300;
+                    spawnEasterEggs('⚛️', 15);
+                },
+                message: 'КОД QUANTUM: +300 квантов!'
+            },
+            'PATTERN': { 
+                effect: () => { 
+                    state.patterns += 150;
+                    spawnEasterEggs('🌀', 15);
+                },
+                message: 'КОД PATTERN: +150 паттернов!'
+            },
+            'KONAMI': { 
+                effect: () => { 
+                    state.thoughts += 9999;
+                    state.quantum += 999;
+                    state.patterns += 999;
+                    state.souls += 99;
+                    spawnEasterEggs('🎮', 50);
+                    document.getElementById('mainContainer').classList.add('god-mode');
+                    setTimeout(() => document.getElementById('mainContainer').classList.remove('god-mode'), 5000);
+                },
+                message: '🥚 KONAMI КОД! Легендарная пасхалка! +ВСЁ!'
             }
+        };
+
+        function submitCode() {
+            const input = document.getElementById('codeInput').value.trim().toUpperCase();
+            const errorEl = document.getElementById('codeError');
+            const successEl = document.getElementById('codeSuccess');
+            
+            if (codes[input]) {
+                codes[input].effect();
+                showAchievement(codes[input].message);
+                successEl.style.display = 'block';
+                errorEl.style.display = 'none';
+                updateUI();
+                setTimeout(closeCodeModal, 1500);
+            } else {
+                errorEl.style.display = 'block';
+                successEl.style.display = 'none';
+                document.getElementById('codeInput').value = '';
+                document.getElementById('codeInput').focus();
+            }
+        }
+
+        document.getElementById('codeInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') submitCode();
         });
 
         // ============ AUDIO ENGINE ============
@@ -618,6 +813,7 @@
         function playHowl() { playTone(300, 'sine', 0.6, 0.04); setTimeout(() => playTone(450, 'sine', 0.4, 0.03), 300); }
         function playEcho() { playTone(600, 'triangle', 0.2, 0.03); setTimeout(() => playTone(800, 'triangle', 0.15, 0.02), 200); setTimeout(() => playTone(1000, 'triangle', 0.1, 0.01), 400); }
         function playCosmic() { playTone(200, 'sine', 0.8, 0.05); playTone(400, 'sine', 0.6, 0.04); playTone(800, 'sine', 0.4, 0.03); }
+        function playSecret() { playTone(440, 'sine', 0.1, 0.05); playTone(554, 'sine', 0.1, 0.05); playTone(660, 'sine', 0.1, 0.05); playTone(880, 'sine', 0.2, 0.06); }
 
         // ============ СОСТОЯНИЕ ============
         const state = {
@@ -631,7 +827,12 @@
             synapses: 0,
             permanentBonus: 1.0,
             quantum: 30,
-            patterns: 15
+            patterns: 15,
+            souls: 0,
+            godMode: false,
+            totalClicks: 0,
+            totalFed: 0,
+            achievements: []
         };
 
         const petContainer = document.getElementById('petContainer');
@@ -647,9 +848,11 @@
         const petNameDisplay = document.getElementById('petNameDisplay');
         const quantumCount = document.getElementById('quantumCount');
         const patternCount = document.getElementById('patternCount');
+        const soulCount = document.getElementById('soulCount');
         const intellectValue = document.getElementById('intellectValue');
         const stabilityValue = document.getElementById('stabilityValue');
         const evoTrack = document.getElementById('evoTrack');
+        const achievementToast = document.getElementById('achievementToast');
 
         // ============ 6 СТАДИЙ ЖИВОТНЫХ ============
         function drawFirefly() {
@@ -896,7 +1099,6 @@
         }
 
         const stageNames = ["Светлячок", "Лис", "Сова", "Волк", "Дракон", "Космо-дракон"];
-        const stageThresholds = [0, 25, 40, 55, 70, 90];
 
         function renderPet() {
             let svgContent = '';
@@ -949,6 +1151,68 @@
             return arr[Math.floor(Math.random() * arr.length)];
         }
 
+        // ============ ДОСТИЖЕНИЯ ============
+        function checkAchievements() {
+            const achievements = [
+                { id: 'first_click', check: () => state.totalClicks >= 1, msg: '🏆 Первый контакт!', once: true },
+                { id: 'ten_clicks', check: () => state.totalClicks >= 10, msg: '🏆 10 кликов!', once: true },
+                { id: 'hundred_clicks', check: () => state.totalClicks >= 100, msg: '🏆 100 кликов!', once: true },
+                { id: 'first_feed', check: () => state.totalFed >= 1, msg: '🍖 Первая кормёжка!', once: true },
+                { id: 'stage2', check: () => state.stage >= 2, msg: '🦊 Эволюция: Лис!', once: true },
+                { id: 'stage3', check: () => state.stage >= 3, msg: '🦉 Эволюция: Сова!', once: true },
+                { id: 'stage4', check: () => state.stage >= 4, msg: '🐺 Эволюция: Волк!', once: true },
+                { id: 'stage5', check: () => state.stage >= 5, msg: '🐉 Эволюция: Дракон!', once: true },
+                { id: 'stage6', check: () => state.stage >= 6, msg: '✨ Эволюция: Космо-дракон!', once: true },
+                { id: 'first_singularity', check: () => state.synapses >= 1, msg: '🌀 Первая сингулярность!', once: true },
+                { id: 'ten_singularities', check: () => state.synapses >= 10, msg: '🌀 10 сингулярностей!', once: true },
+                { id: 'hacked', check: () => state.hacked, msg: '💀 Системный взлом!', once: true },
+                { id: 'rich', check: () => state.thoughts >= 5000, msg: '💰 Богатство мыслей!', once: true },
+                { id: 'souls', check: () => state.souls >= 5, msg: '👻 Коллекционер душ!', once: true }
+            ];
+
+            achievements.forEach(a => {
+                if (a.check() && !state.achievements.includes(a.id) && a.once) {
+                    state.achievements.push(a.id);
+                    showAchievement(a.msg);
+                    playSecret();
+                }
+            });
+        }
+
+        function showAchievement(msg) {
+            achievementToast.textContent = msg;
+            achievementToast.style.display = 'block';
+            setTimeout(() => { achievementToast.style.display = 'none'; }, 3000);
+        }
+
+        // ============ ПАСХАЛКИ ============
+        function spawnEasterEggs(emoji, count = 10) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const egg = document.createElement('div');
+                    egg.className = 'easter-egg-particle';
+                    egg.textContent = emoji;
+                    egg.style.left = (Math.random() * 80 + 10) + '%';
+                    egg.style.top = (Math.random() * 60 + 20) + '%';
+                    egg.style.setProperty('--dx', (Math.random() * 200 - 100) + 'px');
+                    egg.style.setProperty('--dy', (Math.random() * -200 - 50) + 'px');
+                    document.body.appendChild(egg);
+                    setTimeout(() => egg.remove(), 2000);
+                }, i * 50);
+            }
+            playSecret();
+        }
+
+        // Секретный клик по имени питомца
+        petNameDisplay.addEventListener('click', function(e) {
+            e.stopPropagation();
+            state.souls++;
+            updateUI();
+            playSecret();
+            spawnEasterEggs('💎', 5);
+            talk("Душа собрана...");
+        });
+
         // ============ ИГРОВАЯ ЛОГИКА ============
         function updateUI() {
             thoughtSpan.textContent = Math.floor(state.thoughts);
@@ -958,11 +1222,14 @@
             synapseSpan.textContent = state.synapses;
             quantumCount.textContent = Math.floor(state.quantum);
             patternCount.textContent = Math.floor(state.patterns);
+            soulCount.textContent = Math.floor(state.souls);
             intellectValue.textContent = Math.floor(state.intellect);
             stabilityValue.textContent = Math.floor(state.stability);
 
             if (state.thoughts >= 1000) prestigeBtn.classList.add('active');
             else prestigeBtn.classList.remove('active');
+            
+            checkAchievements();
         }
 
         function talk(msg) {
@@ -978,12 +1245,11 @@
                 state.thoughts += income;
                 state.stability -= 0.1;
                 
-                // Генерация ресурсов
                 if (state.stage >= 2) state.quantum += 0.02 * state.permanentBonus;
                 if (state.stage >= 3) state.patterns += 0.015 * state.permanentBonus;
                 if (state.stage >= 4) state.quantum += 0.01 * state.permanentBonus;
                 if (state.stage >= 5) state.patterns += 0.01 * state.permanentBonus;
-                if (state.stage >= 6) { state.quantum += 0.02; state.patterns += 0.015; }
+                if (state.stage >= 6) { state.quantum += 0.02; state.patterns += 0.015; state.souls += 0.001; }
 
                 if (state.stability < 0) state.stability = 0;
                 if (state.stability <= 0 && !state.hacked) triggerHack();
@@ -1001,8 +1267,8 @@
                     state.level = state.stage;
                     renderPet();
                     talk(getPhrase('evolve'));
-                    if (state.stage === 6) playCosmic();
-                    else if (state.stage >= 5) playRoar();
+                    if (state.stage === 6) { playCosmic(); spawnEasterEggs('✨', 25); }
+                    else if (state.stage >= 5) { playRoar(); spawnEasterEggs('🔥', 15); }
                     else if (state.stage >= 3) playEcho();
                     else playPurr();
                     showEvolutionParticles();
@@ -1025,6 +1291,8 @@
 
         function feedPet(type) {
             initAudio();
+            state.totalFed++;
+            
             if (type === 'pixel') {
                 state.stability = Math.min(100, state.stability + 20);
                 state.thoughts -= 5;
@@ -1085,6 +1353,7 @@
                 window.hackOsc = osc;
                 window.hackGain = gain;
             }
+            updateUI();
         }
 
         function removeHack() {
@@ -1118,12 +1387,14 @@
             }
             renderPet();
             playTone(1200, 'sine', 0.8, 0.08);
+            spawnEasterEggs('🌀', 20);
             talk("СИНГУЛЯРНОСТЬ. Новое воплощение.");
             updateUI();
         }
 
         petContainer.addEventListener('click', () => {
             initAudio();
+            state.totalClicks++;
             if (state.hacked) { talk("Не трогай меня!"); return; }
             const bonus = 1 + Math.floor(state.intellect / 25);
             state.thoughts += bonus;
@@ -1135,6 +1406,13 @@
             else if (state.stage === 5) playRoar();
             else playCosmic();
             updateUI();
+            
+            // Пасхалка: 50 кликов = души
+            if (state.totalClicks === 50) {
+                state.souls += 3;
+                spawnEasterEggs('💎', 10);
+                talk("Ты нашёл секрет... Души рядом.");
+            }
         });
 
         // ============ ЧАСТИЦЫ ============
@@ -1192,6 +1470,10 @@
         updateUI();
         startMining();
         talk("Я здесь... В пустоте.");
+        console.log('%c 🥚 Пасхалка: Кликни по имени питомца! ',
+            'background:#1a1a20;color:#ddd;padding:6px;');
+        console.log('%c 🔐 Коды: HELLO, SINGULARITY, GODMODE, MOONLIGHT, VOIDWALKER, QUANTUM, PATTERN, KONAMI ',
+            'color:#555;font-size:10px;');
     </script>
 </body>
 </html>
