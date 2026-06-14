@@ -4,23 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>SINGULARITY PETS // Глубинная Пустота: Омега</title>
-    <meta name="description" content="Симулятор ИИ-питомца с 18 стадиями эволюции. Глубокая механика, квесты, достижения, битвы, кастомизация.">
+    <meta name="description" content="Симулятор ИИ-питомца с 18 стадиями эволюции. Многостраничное приложение с глубокой механикой.">
     <meta name="author" content="HopeGopeTop (HGT)">
-    <meta name="copyright" content="© 2026 HopeGopeTop (HGT). Лицензия HGT-CLUL.">
+    <meta name="copyright" content="© 2026 HopeGopeTop (HGT). HGT-CLUL License.">
     <style>
         :root {
             --bg: #06060d;
-            --panel: rgba(16, 16, 24, 0.92);
+            --panel: rgba(16, 16, 24, 0.94);
             --border: rgba(255, 255, 255, 0.05);
             --text: #c0c0cc;
             --text2: #808090;
             --accent: #c0a870;
-            --accent2: #7090b0;
-            --accent3: #b07090;
-            --danger: #b04040;
-            --success: #50a060;
             --card: rgba(255,255,255,0.015);
             --card-hover: rgba(255,255,255,0.04);
+            --danger: #b04040;
+            --success: #50a060;
             --r: 22px;
             --rs: 14px;
             --rxs: 10px;
@@ -36,60 +34,98 @@
         }
         canvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
 
-        .app {
+        /* === APP SHELL === */
+        .app-shell {
             position:relative; z-index:10; width:95%; max-width:520px;
-            height:96vh; max-height:900px; display:flex; flex-direction:column; gap:6px;
+            height:96vh; max-height:900px; display:flex; flex-direction:column;
+            gap:0; overflow:hidden;
         }
 
-        /* === ВЕРХНЯЯ ПАНЕЛЬ === */
-        .topbar {
+        /* === HEADER === */
+        .app-header {
             background:var(--panel); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-            border:1px solid var(--border); border-radius:var(--r); padding:12px 16px;
-            display:flex; justify-content:space-between; align-items:center;
-            box-shadow:0 8px 32px rgba(0,0,0,0.4); flex-shrink:0;
+            border:1px solid var(--border); border-radius:var(--r) var(--r) 0 0;
+            padding:12px 18px; display:flex; justify-content:space-between; align-items:center;
+            box-shadow:0 4px 20px rgba(0,0,0,0.4); flex-shrink:0; position:relative; z-index:20;
         }
-        .topbar-left { display:flex; align-items:center; gap:12px; }
-        .pet-icon {
-            width:44px; height:44px; border-radius:50%; background:var(--card);
-            display:flex; align-items:center; justify-content:center; font-size:26px;
+        .header-left { display:flex; align-items:center; gap:10px; }
+        .pet-icon-sm {
+            width:38px; height:38px; border-radius:50%; background:var(--card);
+            display:flex; align-items:center; justify-content:center; font-size:22px;
             border:1px solid var(--border); cursor:pointer; transition:all var(--t);
         }
-        .pet-icon:hover { background:var(--card-hover); border-color:rgba(255,255,255,0.15); }
-        .topbar-info { display:flex; flex-direction:column; }
-        .topbar-name { font-weight:700; font-size:15px; color:#e0e0e8; }
-        .topbar-stage { font-size:10px; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; }
-        .topbar-right { display:flex; gap:8px; align-items:center; }
-        .res-chip {
+        .pet-icon-sm:hover { background:var(--card-hover); }
+        .header-info { display:flex; flex-direction:column; }
+        .header-name { font-weight:700; font-size:14px; color:#e0e0e8; }
+        .header-stage { font-size:9px; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; }
+        .header-res { display:flex; gap:8px; }
+        .header-chip {
             background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
-            padding:7px 12px; display:flex; align-items:center; gap:6px;
-            font-size:13px; font-weight:600;
+            padding:6px 10px; display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600;
         }
-        .res-chip.special { border-color:rgba(192,168,112,0.3); }
+        .header-chip.gold { border-color:rgba(192,168,112,0.3); }
 
-        /* === ЗОНА ПИТОМЦА === */
-        .pet-area {
-            background:var(--panel); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-            border:1px solid var(--border); border-radius:var(--r);
-            padding:12px 16px 8px; display:flex; flex-direction:column; align-items:center;
-            box-shadow:0 8px 32px rgba(0,0,0,0.4); flex:1; justify-content:center;
-            position:relative; overflow:hidden; min-height:240px;
+        /* === TAB BAR === */
+        .tab-bar {
+            display:flex; background:var(--panel); border:1px solid var(--border);
+            border-top:none; flex-shrink:0; position:relative; z-index:20;
+        }
+        .tab-btn {
+            flex:1; padding:10px 4px; text-align:center; font-size:10px; color:var(--text2);
+            cursor:pointer; transition:all var(--t); letter-spacing:0.04em;
+            text-transform:uppercase; border:none; background:transparent;
+            position:relative; font-weight:500;
+        }
+        .tab-btn:hover { color:#ccc; }
+        .tab-btn.active { color:#fff; }
+        .tab-btn.active::after {
+            content:''; position:absolute; bottom:0; left:20%; right:20%; height:2px;
+            background:var(--accent); border-radius:2px;
+        }
+        .tab-btn .tab-ico { font-size:16px; display:block; margin-bottom:2px; }
+
+        /* === PAGE CONTAINER === */
+        .page-container {
+            flex:1; overflow:hidden; position:relative;
+            background:var(--panel); border:1px solid var(--border); border-top:none;
+            border-radius:0 0 var(--r) var(--r); box-shadow:0 8px 32px rgba(0,0,0,0.4);
+        }
+        .page {
+            position:absolute; top:0; left:0; width:100%; height:100%;
+            overflow-y:auto; padding:12px 14px;
+            opacity:0; transform:translateY(8px); pointer-events:none;
+            transition:all var(--t);
+        }
+        .page.active {
+            opacity:1; transform:translateY(0); pointer-events:all;
+        }
+
+        /* === PAGE: HOME (ПИТОМЕЦ) === */
+        .pet-area-page {
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            min-height:100%; gap:8px;
         }
         .pet-svg-wrap {
-            width:170px; height:170px; cursor:pointer; transition:transform 0.12s ease;
-            filter:drop-shadow(0 20px 40px rgba(0,0,0,0.6)); position:relative; z-index:2;
+            width:160px; height:160px; cursor:pointer; transition:transform 0.12s ease;
+            filter:drop-shadow(0 20px 40px rgba(0,0,0,0.6)); position:relative;
             animation: float 7s ease-in-out infinite, breathe 6s ease-in-out infinite;
         }
         .pet-svg-wrap:active { transform:scale(0.88); }
         .pet-svg-wrap svg { width:100%; height:100%; transition:all var(--t); }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
-        @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
+        .enemy-indicator { font-size:22px; position:absolute; top:5px; right:5px; z-index:3; display:none; }
+        .battle-active .enemy-indicator { display:block; animation:float 2s ease-in-out infinite; }
+        .battle-active .pet-area-page { border:1px solid rgba(200,100,80,0.3); border-radius:var(--r); }
+        .hp-bar-wrap { width:80%; height:5px; background:rgba(255,255,255,0.03); border-radius:10px; display:none; }
+        .battle-active .hp-bar-wrap { display:block; }
+        .hp-bar-fill { height:100%; background:linear-gradient(90deg,#e05050,#ff8844); border-radius:10px; transition:width 0.5s; }
         .dialogue {
-            position:relative; z-index:2; background:var(--card); border:1px solid var(--border);
-            border-radius:var(--rs); padding:7px 16px; font-size:12px; color:var(--text2);
-            font-style:italic; margin-top:6px; text-align:center; min-height:18px;
-            transition:opacity 0.3s; max-width:90%;
+            background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+            padding:7px 16px; font-size:12px; color:var(--text2); font-style:italic;
+            text-align:center; min-height:18px; transition:opacity 0.3s; max-width:90%;
         }
-        .evo-strip { display:flex; gap:3px; justify-content:center; flex-wrap:wrap; margin-top:6px; z-index:2; }
+        .evo-strip { display:flex; gap:3px; justify-content:center; flex-wrap:wrap; }
         .evo-dot {
             width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.06);
             transition:all var(--t); cursor:pointer; position:relative;
@@ -104,70 +140,97 @@
         }
         @keyframes pulse-dot { 0%,100%{transform:scale(1)} 50%{transform:scale(1.6)} }
 
-        /* === ПАНЕЛЬ ХАРАКТЕРИСТИК === */
-        .stats-panel {
-            background:var(--panel); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-            border:1px solid var(--border); border-radius:var(--r); padding:10px 14px;
-            display:grid; grid-template-columns:1fr 1fr; gap:8px;
-            box-shadow:0 8px 32px rgba(0,0,0,0.4); flex-shrink:0;
+        /* === PAGE: STATS === */
+        .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .stat-card {
+            background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+            padding:12px 14px; display:flex; flex-direction:column; gap:4px;
         }
-        .stat-item { display:flex; flex-direction:column; gap:3px; }
+        .stat-card.full { grid-column:1/-1; }
         .stat-head { display:flex; justify-content:space-between; align-items:center; }
-        .stat-label { font-size:9px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text2); font-weight:600; }
-        .stat-val { font-size:10px; font-weight:700; color:var(--text); }
-        .stat-bar { height:3px; background:rgba(255,255,255,0.03); border-radius:10px; overflow:hidden; }
+        .stat-label { font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text2); font-weight:600; }
+        .stat-val { font-size:11px; font-weight:700; color:var(--text); }
+        .stat-bar { height:3px; background:rgba(255,255,255,0.03); border-radius:10px; overflow:hidden; margin-top:2px; }
         .stat-fill { height:100%; border-radius:10px; transition:width 0.6s ease; }
         .sf-iq { background:linear-gradient(90deg,#a090b0,#c8b8d8); }
         .sf-st { background:linear-gradient(90deg,#b0a090,#d0c0b0); }
         .sf-qt { background:linear-gradient(90deg,#90b0a0,#b0d0c0); }
         .sf-pt { background:linear-gradient(90deg,#b090a0,#d0b0c0); }
-
-        /* === ПАНЕЛЬ РЕСУРСОВ === */
-        .res-panel {
-            background:var(--panel); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-            border:1px solid var(--border); border-radius:var(--r); padding:8px 14px;
-            display:flex; gap:6px; box-shadow:0 8px 32px rgba(0,0,0,0.4); flex-shrink:0;
+        .stat-big-val { font-size:22px; font-weight:700; color:var(--text); }
+        .res-row { display:flex; gap:8px; margin-top:8px; }
+        .res-card {
+            flex:1; background:var(--card); border:1px solid var(--border);
+            border-radius:var(--rs); padding:10px; text-align:center;
         }
-        .res-item { flex:1; text-align:center; font-size:9px; color:var(--text2); letter-spacing:0.04em; }
-        .res-item .val { font-size:15px; font-weight:700; color:var(--text); display:block; }
-        .res-item .val.accent { color:var(--accent); }
+        .res-card .val { font-size:18px; font-weight:700; color:var(--text); display:block; }
+        .res-card .val.gold { color:var(--accent); }
+        .res-card .lbl { font-size:9px; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; }
 
-        /* === ПАНЕЛЬ ДЕЙСТВИЙ === */
-        .act-panel {
-            background:var(--panel); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-            border:1px solid var(--border); border-radius:var(--r); padding:10px 12px;
-            display:grid; grid-template-columns:1fr 1fr; gap:6px;
-            box-shadow:0 8px 32px rgba(0,0,0,0.4); flex-shrink:0;
+        /* === PAGE: ACTIONS === */
+        .act-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .act-card {
+            background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+            padding:14px 10px; cursor:pointer; transition:all var(--t);
+            display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center;
         }
-        .act-btn {
-            background:var(--card); border:1px solid var(--border); color:var(--text);
-            padding:9px 6px; border-radius:var(--rs); font-size:11px; font-weight:500;
-            cursor:pointer; transition:all var(--t); display:flex; align-items:center;
-            justify-content:center; gap:5px; letter-spacing:0.01em; position:relative;
-        }
-        .act-btn:hover { background:var(--card-hover); border-color:rgba(255,255,255,0.12); color:#fff; }
-        .act-btn:active { transform:scale(0.94); background:rgba(255,255,255,0.08); }
-        .act-btn .ico { font-size:16px; }
-        .act-btn .cst { font-size:8px; color:var(--text2); position:absolute; bottom:2px; right:7px; }
-        .act-btn.fw { grid-column:1/-1; background:rgba(160,200,180,0.03); border-color:rgba(160,200,180,0.1); }
-        .act-btn.fw:hover { background:rgba(160,200,180,0.06); border-color:rgba(160,200,180,0.2); }
-        .act-btn.battle-btn { background:rgba(200,120,100,0.04); border-color:rgba(200,120,100,0.15); }
-        .act-btn.battle-btn:hover { background:rgba(200,120,100,0.08); }
+        .act-card:hover { background:var(--card-hover); border-color:rgba(255,255,255,0.12); color:#fff; }
+        .act-card:active { transform:scale(0.95); background:rgba(255,255,255,0.08); }
+        .act-card .ico { font-size:28px; }
+        .act-card .name { font-size:13px; font-weight:600; }
+        .act-card .cost { font-size:9px; color:var(--text2); }
+        .act-card.fw { grid-column:1/-1; flex-direction:row; justify-content:center; gap:10px; }
+        .act-card.battle { background:rgba(200,120,100,0.04); border-color:rgba(200,120,100,0.12); }
+        .act-card.battle:hover { background:rgba(200,120,100,0.08); }
+        .act-card.special { background:rgba(160,200,180,0.03); border-color:rgba(160,200,180,0.1); }
+        .act-card.special:hover { background:rgba(160,200,180,0.06); }
 
-        /* === НИЖНЯЯ ПАНЕЛЬ === */
-        .bot-panel { display:flex; gap:6px; flex-shrink:0; }
-        .bot-btn {
-            flex:1; background:var(--panel); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-            border:1px solid var(--border); color:var(--text2); padding:10px;
-            border-radius:var(--r); font-size:10px; letter-spacing:0.05em;
-            cursor:pointer; transition:all var(--t); text-align:center;
-            box-shadow:0 8px 32px rgba(0,0,0,0.4);
+        /* === PAGE: QUESTS === */
+        .quest-card {
+            background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+            padding:12px 14px; margin-bottom:8px; display:flex; align-items:center;
+            gap:10px; transition:all var(--t);
         }
-        .bot-btn:hover { background:rgba(255,255,255,0.04); color:#ddd; border-color:rgba(255,255,255,0.12); }
-        .bot-btn.hl { border-color:rgba(192,168,112,0.25); color:var(--accent); }
-        .bot-btn.hl:hover { background:rgba(192,168,112,0.05); }
+        .quest-card.complete { border-color:rgba(80,160,96,0.3); }
+        .quest-ico { font-size:24px; }
+        .quest-info { flex:1; }
+        .quest-desc { font-size:13px; color:var(--text); }
+        .quest-status { font-size:10px; color:var(--text2); }
+        .quest-status.done { color:var(--success); }
 
-        /* === МОДАЛЬНЫЕ ОКНА === */
+        /* === PAGE: ACHIEVEMENTS === */
+        .achieve-card {
+            background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+            padding:10px 14px; margin-bottom:6px; font-size:13px;
+            display:flex; align-items:center; gap:10px;
+        }
+        .achieve-ico { font-size:22px; }
+
+        /* === PAGE: BESTIARY === */
+        .bestiary-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+        .bestiary-card {
+            background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+            padding:10px 6px; text-align:center; cursor:pointer; transition:all var(--t);
+            display:flex; flex-direction:column; align-items:center; gap:4px;
+        }
+        .bestiary-card:hover { background:var(--card-hover); }
+        .bestiary-card.unlocked { border-color:rgba(192,168,112,0.3); }
+        .bestiary-card .ico { font-size:28px; }
+        .bestiary-card .name { font-size:10px; color:var(--text); }
+        .bestiary-card .num { font-size:9px; color:var(--text2); }
+        .bestiary-card.locked { opacity:0.35; }
+
+        /* === PAGE: SETTINGS === */
+        .setting-card {
+            background:var(--card); border:1px solid var(--border); border-radius:var(--rs);
+            padding:14px 16px; margin-bottom:8px; cursor:pointer; transition:all var(--t);
+        }
+        .setting-card:hover { background:var(--card-hover); }
+        .setting-card .title { font-size:14px; font-weight:600; }
+        .setting-card .desc { font-size:10px; color:var(--text2); margin-top:2px; }
+        .setting-card.danger { border-color:rgba(180,64,64,0.2); }
+        .setting-card.danger .title { color:var(--danger); }
+
+        /* === MODALS === */
         .modal {
             position:fixed; top:0; left:0; width:100%; height:100%;
             background:rgba(0,0,0,0.88); z-index:200; display:none;
@@ -194,10 +257,11 @@
             cursor:pointer; margin-top:6px; transition:all var(--t); margin-right:4px; font-size:12px;
         }
         .modal-box button:hover { background:rgba(255,255,255,0.08); }
+        .modal-box button.danger { border-color:rgba(180,64,64,0.3); color:var(--danger); }
         .modal-box .msg { font-size:11px; margin-top:3px; display:none; }
         .modal-box .msg.err { color:#e05050; } .modal-box .msg.ok { color:#50e050; }
 
-        /* === ТОСТ === */
+        /* === TOAST === */
         .toast {
             position:fixed; top:20px; left:50%; transform:translateX(-50%);
             background:rgba(24,24,32,0.96); border:1px solid rgba(192,168,112,0.25);
@@ -206,27 +270,18 @@
             display:none; animation:toastIn 0.4s ease-out; letter-spacing:0.02em;
         }
         @keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(-30px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
-
         .egg {
             position:fixed; pointer-events:none; z-index:150;
             animation:eggBurst 2.2s ease-out forwards; font-size:30px;
         }
         @keyframes eggBurst { 0%{opacity:1;transform:translate(0,0) scale(1) rotate(0)} 100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0) rotate(200deg)} }
-
-        .hacked .pet-area { animation:shk 0.09s infinite; }
+        .hacked .pet-area-page { animation:shk 0.09s infinite; }
         @keyframes shk { 0%,100%{transform:translate(0,0)} 25%{transform:translate(-3px,2px)} 75%{transform:translate(3px,-2px)} }
 
-        /* Боевой режим */
-        .battle-active .pet-area { border-color:rgba(200,100,80,0.4); }
-        .hp-bar-wrap { width:100%; height:6px; background:rgba(255,255,255,0.03); border-radius:10px; margin-top:4px; display:none; }
-        .battle-active .hp-bar-wrap { display:block; }
-        .hp-bar-fill { height:100%; background:linear-gradient(90deg,#e05050,#ff8844); border-radius:10px; transition:width 0.5s; }
-        .enemy-indicator { font-size:20px; position:absolute; top:10px; right:16px; z-index:3; display:none; }
-        .battle-active .enemy-indicator { display:block; animation:float 2s ease-in-out infinite; }
-
         @media (max-width:400px) {
-            .app { gap:4px; } .pet-svg-wrap { width:130px; height:130px; }
-            .act-panel { gap:4px; padding:8px; } .act-btn { font-size:10px; padding:7px 4px; }
+            .pet-svg-wrap { width:130px; height:130px; }
+            .act-grid { gap:5px; } .act-card { padding:10px 6px; }
+            .bestiary-grid { grid-template-columns:1fr 1fr; }
         }
     </style>
 </head>
@@ -234,22 +289,20 @@
     <canvas id="particleCanvas"></canvas>
     <div class="toast" id="toast"></div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ПРАВ -->
+    <!-- МОДАЛЬНЫЕ ОКНА -->
     <div class="modal" id="rightsModal">
         <div class="modal-box">
             <h2>⚖️ Лицензия HGT</h2>
             <p><strong>Singularity Pets — Омега</strong></p>
             <p>© 2026 HopeGopeTop (HGT). Все права защищены.</p>
             <p><strong>HGT Custom Limited Use License (HGT-CLUL)</strong></p>
-            <p><strong>Разрешено:</strong> личное использование, изучение, личная модификация, некоммерческое распространение с указанием авторства.</p>
-            <p><strong>Запрещено:</strong> коммерческое использование без разрешения, удаление авторства, включение в платные продукты.</p>
-            <p><strong>Гарантии:</strong> предоставляется «как есть». HGT не несёт ответственности за ущерб.</p>
+            <p><strong>Разрешено:</strong> личное использование, изучение, личная модификация, некоммерческое распространение.</p>
+            <p><strong>Запрещено:</strong> коммерческое использование, удаление авторства, включение в платные продукты.</p>
+            <p><strong>Гарантии:</strong> «как есть». HGT не несёт ответственности.</p>
             <p style="color:#555;font-size:10px;">Связь: hope.gope.top@proton.me</p>
             <button onclick="closeModal('rightsModal')">Понятно</button>
         </div>
     </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО КОДОВ -->
     <div class="modal" id="codeModal">
         <div class="modal-box">
             <h2>🔐 Код создателя HGT</h2>
@@ -261,13 +314,122 @@
             <p style="font-size:9px;color:#444;margin-top:10px;">Коды: HELLO, SINGULARITY, GODMODE, MOONLIGHT, VOIDWALKER, QUANTUM, PATTERN, KONAMI, HGT, BATTLE, QUEST, HEAL</p>
         </div>
     </div>
+    <div class="modal" id="bestiaryModal">
+        <div class="modal-box" id="bestiaryModalContent"></div>
+    </div>
+    <div class="modal" id="confirmModal">
+        <div class="modal-box">
+            <h2 id="confirmTitle">Подтверждение</h2>
+            <p id="confirmText">Вы уверены?</p>
+            <button onclick="confirmAction()">Да</button>
+            <button onclick="closeModal('confirmModal')">Отмена</button>
+        </div>
+    </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО КВЕСТОВ -->
-    <div class="modal" id="questModal">
-        <div class="modal-box" id="questContent">
-            <h2>📜 Активные задания</h2>
-            <div id="questList"></div>
-            <button onclick="closeModal('questModal')">Закрыть</button>
+    <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
+    <div class="app-shell" id="appShell">
+        <!-- HEADER -->
+        <div class="app-header">
+            <div class="header-left">
+                <div class="pet-icon-sm" id="headerAvatar" onclick="collectSoul()">○</div>
+                <div class="header-info">
+                    <span class="header-name" id="headerName">Атом</span>
+                    <span class="header-stage" id="headerStage">Стадия 1/18</span>
+                </div>
+            </div>
+            <div class="header-res">
+                <div class="header-chip"><span>◈</span><span id="headerThoughts">0</span></div>
+                <div class="header-chip gold"><span>💎</span><span id="headerSouls">0</span></div>
+            </div>
+        </div>
+
+        <!-- TAB BAR -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-page="home"><span class="tab-ico">🧬</span>Питомец</button>
+            <button class="tab-btn" data-page="stats"><span class="tab-ico">📊</span>Статы</button>
+            <button class="tab-btn" data-page="actions"><span class="tab-ico">⚡</span>Действия</button>
+            <button class="tab-btn" data-page="quests"><span class="tab-ico">📜</span>Квесты</button>
+            <button class="tab-btn" data-page="bestiary"><span class="tab-ico">📖</span>Бестиарий</button>
+            <button class="tab-btn" data-page="settings"><span class="tab-ico">⚙️</span>Ещё</button>
+        </div>
+
+        <!-- PAGES -->
+        <div class="page-container">
+            <!-- HOME -->
+            <div class="page active" id="page-home">
+                <div class="pet-area-page" id="petAreaPage">
+                    <div class="enemy-indicator" id="enemyIndicator">👾</div>
+                    <div class="pet-svg-wrap" id="petContainer">
+                        <svg id="petSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
+                    </div>
+                    <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hpBar" style="width:100%"></div></div>
+                    <div class="dialogue" id="dialogue">Я существую...</div>
+                    <div class="evo-strip" id="evoTrack"></div>
+                </div>
+            </div>
+
+            <!-- STATS -->
+            <div class="page" id="page-stats">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-head"><span class="stat-label">🧠 Познание</span><span class="stat-val" id="sIntellect">3</span></div>
+                        <div class="stat-bar"><div class="stat-fill sf-iq" id="sIqBar" style="width:3%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-head"><span class="stat-label">🍖 Стабильность</span><span class="stat-val" id="sStability">100</span></div>
+                        <div class="stat-bar"><div class="stat-fill sf-st" id="sStBar" style="width:100%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-head"><span class="stat-label">⚛️ Кванты</span><span class="stat-val" id="sQuantum">20</span></div>
+                        <div class="stat-bar"><div class="stat-fill sf-qt" id="sQtBar" style="width:20%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-head"><span class="stat-label">🌀 Паттерны</span><span class="stat-val" id="sPatterns">10</span></div>
+                        <div class="stat-bar"><div class="stat-fill sf-pt" id="sPtBar" style="width:10%"></div></div>
+                    </div>
+                    <div class="stat-card full">
+                        <div class="stat-head"><span class="stat-label">⭐ Множитель</span><span class="stat-big-val" id="sBonus">1.0x</span></div>
+                    </div>
+                </div>
+                <div class="res-row">
+                    <div class="res-card"><span class="val" id="sLevel">1</span><span class="lbl">Уровень</span></div>
+                    <div class="res-card"><span class="val" id="sAtk">1</span><span class="lbl">Атака</span></div>
+                    <div class="res-card"><span class="val" id="sDef">0</span><span class="lbl">Защита</span></div>
+                    <div class="res-card"><span class="val gold" id="sSynapses">0</span><span class="lbl">Связей</span></div>
+                </div>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="page" id="page-actions">
+                <div class="act-grid">
+                    <div class="act-card" onclick="feedPet('pixel')"><span class="ico">○</span><span class="name">Частица</span><span class="cost">−5◈ · +Стабильность</span></div>
+                    <div class="act-card" onclick="feedPet('data')"><span class="ico">◈</span><span class="name">Паттерн</span><span class="cost">−10🌀 · +Познание</span></div>
+                    <div class="act-card" onclick="feedPet('particle')"><span class="ico">●</span><span class="name">Нейтрон</span><span class="cost">−8⚛️ · +Стаб +Позн</span></div>
+                    <div class="act-card" onclick="feedPet('wave')"><span class="ico">≈</span><span class="name">Волна</span><span class="cost">−6⚛️ · +Познание</span></div>
+                    <div class="act-card special fw" onclick="feedPet('quantum')"><span class="ico">◑</span><span class="name">Квантовый коллапс</span><span class="cost">−15⚛️ · 50/50</span></div>
+                    <div class="act-card battle fw" onclick="startBattle()"><span class="ico">⚔️</span><span class="name">В бой!</span><span class="cost">−20◈ · Награда/Риск</span></div>
+                </div>
+            </div>
+
+            <!-- QUESTS -->
+            <div class="page" id="page-quests">
+                <div id="questList"><p style="color:#666;text-align:center;margin-top:20px;">Нет активных заданий.</p></div>
+                <div class="act-card special fw" onclick="generateQuest()" style="margin-top:12px;"><span class="ico">➕</span><span class="name">Создать задание</span></div>
+            </div>
+
+            <!-- BESTIARY -->
+            <div class="page" id="page-bestiary">
+                <div class="bestiary-grid" id="bestiaryGrid"></div>
+            </div>
+
+            <!-- SETTINGS -->
+            <div class="page" id="page-settings">
+                <div class="setting-card" onclick="openModal('codeModal')"><div class="title">🔐 Код создателя</div><div class="desc">Ввести секретный код HGT</div></div>
+                <div class="setting-card" onclick="openModal('achieveModal')"><div class="title">🏆 Достижения</div><div class="desc">Просмотр всех достижений (<span id="achieveCount">0</span>)</div></div>
+                <div class="setting-card" onclick="triggerSingularity()"><div class="title">🌀 Сингулярность</div><div class="desc">Сброс с бонусом (нужно 1000◈)</div></div>
+                <div class="setting-card" onclick="openModal('rightsModal')"><div class="title">⚖️ Лицензия</div><div class="desc">HGT-CLUL © 2026 HopeGopeTop</div></div>
+                <div class="setting-card danger" onclick="confirmReset()"><div class="title">💀 Полный сброс</div><div class="desc">Удалить весь прогресс</div></div>
+            </div>
         </div>
     </div>
 
@@ -280,100 +442,46 @@
         </div>
     </div>
 
-    <div class="app" id="appContainer">
-        <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
-        <div class="topbar">
-            <div class="topbar-left">
-                <div class="pet-icon" id="petAvatar" onclick="collectSoul()">○</div>
-                <div class="topbar-info">
-                    <span class="topbar-name" id="petNameTop">Атом</span>
-                    <span class="topbar-stage" id="petStageTop">Стадия 1/18</span>
-                </div>
-            </div>
-            <div class="topbar-right">
-                <div class="res-chip"><span>◈</span><span id="thoughtCount">0</span></div>
-                <div class="res-chip special"><span>💎</span><span id="soulCount">0</span></div>
-            </div>
-        </div>
-
-        <!-- ЗОНА ПИТОМЦА -->
-        <div class="pet-area" id="petStageArea">
-            <div class="enemy-indicator" id="enemyIndicator">👾</div>
-            <div class="pet-svg-wrap" id="petContainer">
-                <svg id="petSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"></svg>
-            </div>
-            <div class="hp-bar-wrap"><div class="hp-bar-fill" id="hpBar" style="width:100%"></div></div>
-            <div class="dialogue" id="dialogue">Я существую...</div>
-            <div class="evo-strip" id="evoTrack"></div>
-        </div>
-
-        <!-- ПАНЕЛЬ ХАРАКТЕРИСТИК -->
-        <div class="stats-panel">
-            <div class="stat-item">
-                <div class="stat-head"><span class="stat-label">🧠 Познание</span><span class="stat-val" id="intellectValue">3</span></div>
-                <div class="stat-bar"><div class="stat-fill sf-iq" id="iqBar" style="width:3%"></div></div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-head"><span class="stat-label">🍖 Стабильность</span><span class="stat-val" id="stabilityValue">100</span></div>
-                <div class="stat-bar"><div class="stat-fill sf-st" id="hungerBar" style="width:100%"></div></div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-head"><span class="stat-label">⚛️ Кванты</span><span class="stat-val" id="quantumValue">20</span></div>
-                <div class="stat-bar"><div class="stat-fill sf-qt" id="quantumBar" style="width:20%"></div></div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-head"><span class="stat-label">🌀 Паттерны</span><span class="stat-val" id="patternValue">10</span></div>
-                <div class="stat-bar"><div class="stat-fill sf-pt" id="patternBar" style="width:10%"></div></div>
-            </div>
-        </div>
-
-        <!-- ПАНЕЛЬ РЕСУРСОВ -->
-        <div class="res-panel">
-            <div class="res-item">✦ Ур.<span class="val" id="lvlDisplay">1</span></div>
-            <div class="res-item">⚔️ АТК<span class="val" id="atkDisplay">1</span></div>
-            <div class="res-item">🛡️ ЗЩТ<span class="val" id="defDisplay">0</span></div>
-            <div class="res-item">🔗 Связей<span class="val" id="synapseCount">0</span></div>
-            <div class="res-item">⭐ Множ.<span class="val accent" id="bonusDisplay">1.0x</span></div>
-            <div class="res-item">🏆 Дост.<span class="val" id="achieveCount">0</span></div>
-        </div>
-
-        <!-- ПАНЕЛЬ ДЕЙСТВИЙ -->
-        <div class="act-panel">
-            <button class="act-btn" onclick="feedPet('pixel')"><span class="ico">○</span> Частица<span class="cst">−5◈</span></button>
-            <button class="act-btn" onclick="feedPet('data')"><span class="ico">◈</span> Паттерн<span class="cst">−10🌀</span></button>
-            <button class="act-btn" onclick="feedPet('particle')"><span class="ico">●</span> Нейтрон<span class="cst">−8⚛️</span></button>
-            <button class="act-btn" onclick="feedPet('wave')"><span class="ico">≈</span> Волна<span class="cst">−6⚛️</span></button>
-            <button class="act-btn fw" onclick="feedPet('quantum')"><span class="ico">◑</span> Квантовый коллапс<span class="cst">−15⚛️</span></button>
-            <button class="act-btn battle-btn" onclick="startBattle()"><span class="ico">⚔️</span> В бой!<span class="cst">−20◈</span></button>
-        </div>
-
-        <!-- НИЖНЯЯ ПАНЕЛЬ -->
-        <div class="bot-panel">
-            <button class="bot-btn hl" id="prestigeBtn" onclick="triggerSingularity()">🌀 Сингулярность</button>
-            <button class="bot-btn" onclick="openModal('questModal')">📜 Квесты</button>
-            <button class="bot-btn" onclick="openModal('achieveModal')">🏆 Достижения</button>
-            <button class="bot-btn" onclick="openModal('codeModal')">🔐 Код</button>
-            <button class="bot-btn" onclick="openModal('rightsModal')">⚖️ Права</button>
-        </div>
-    </div>
-
     <script>
-        // ============ ЗАЩИТА ПРАВ ============
-        console.log("%c Singularity Pets - Омега %c v5.0 ",
+        // ============ ЗАЩИТА ============
+        console.log("%c Singularity Pets - Омега %c v6.0 (Multi-Page) ",
             "background:#181820;color:#e0e0e8;padding:8px;border-radius:6px 0 0 6px;",
             "background:#333;color:#aaa;padding:8px;border-radius:0 6px 6px 0;");
-        console.log("%c © 2026 HopeGopeTop (HGT). HGT-CLUL. Все права защищены.","color:#888;font-size:10px;");
-        console.log("%c Коды: HELLO SINGULARITY GODMODE MOONLIGHT VOIDWALKER QUANTUM PATTERN KONAMI HGT BATTLE QUEST HEAL","color:#444;font-size:8px;");
-
+        console.log("%c © 2026 HopeGopeTop (HGT). HGT-CLUL.","color:#888;font-size:10px;");
         document.addEventListener('copy',(e)=>{if(window.getSelection().toString().length>200){e.preventDefault();e.clipboardData.setData('text/plain',window.getSelection().toString().substring(0,200)+'\n\n[HGT-CLUL © 2026 HopeGopeTop]');}});
-        document.addEventListener('keydown',(e)=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();console.log('%c Сохранение разрешено только для личного использования. HGT-CLUL © 2026.','background:#181820;color:#aaa;padding:6px;');}});
+        document.addEventListener('keydown',(e)=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();}});
 
-        function openModal(id){document.getElementById(id).classList.add('show');if(id==='codeModal'){document.getElementById('codeInput').value='';document.getElementById('codeErr').style.display='none';document.getElementById('codeOk').style.display='none';setTimeout(()=>document.getElementById('codeInput')?.focus(),100);}if(id==='questModal')renderQuests();if(id==='achieveModal')renderAchievements();}
+        function openModal(id){
+            document.getElementById(id).classList.add('show');
+            if(id==='codeModal'){document.getElementById('codeInput').value='';document.getElementById('codeErr').style.display='none';document.getElementById('codeOk').style.display='none';setTimeout(()=>document.getElementById('codeInput')?.focus(),100);}
+            if(id==='achieveModal')renderAchievements();
+            if(id==='bestiaryModal')renderBestiaryModal();
+        }
         function closeModal(id){document.getElementById(id).classList.remove('show');}
         document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',(e)=>{if(e.target===m)m.classList.remove('show');}));
 
+        // ============ НАВИГАЦИЯ ============
+        let currentPage='home';
+        document.querySelectorAll('.tab-btn').forEach(btn=>{
+            btn.addEventListener('click',()=>{
+                document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+                btn.classList.add('active');
+                const page=btn.dataset.page;
+                switchPage(page);
+            });
+        });
+        function switchPage(page){
+            document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+            document.getElementById('page-'+page).classList.add('active');
+            currentPage=page;
+            if(page==='quests')renderQuests();
+            if(page==='bestiary')renderBestiary();
+            if(page==='stats')updateStatsPage();
+            if(page==='settings')document.getElementById('achieveCount').textContent=s.achievements.length;
+        }
+
         // ============ КОДЫ ============
-        const codes = {
+        const codes={
             'HELLO':{effect:()=>{s.thoughts+=500;s.quantum+=100;s.patterns+=50;},msg:'HELLO: +500◈ +100⚛️ +50🌀'},
             'SINGULARITY':{effect:()=>{s.synapses++;s.permanentBonus=1+s.synapses*0.25;},msg:'SINGULARITY: +1 нейросвязь!'},
             'GODMODE':{effect:()=>{s.intellect=100;s.stability=100;s.thoughts+=5000;s.quantum+=500;s.patterns+=200;},msg:'GODMODE: ВСЁ НА МАКСИМУМ!'},
@@ -385,9 +493,8 @@
             'HGT':{effect:()=>{s.thoughts+=2026;s.souls+=20;s.synapses+=2;s.permanentBonus=1+s.synapses*0.25;spawnEggs('👑',35);},msg:'HGT: Код создателя! +2026◈ +20💎 +2🔗'},
             'BATTLE':{effect:()=>{startBattle();},msg:'BATTLE: Враг появился!'},
             'QUEST':{effect:()=>{generateQuest();},msg:'QUEST: Новое задание!'},
-            'HEAL':{effect:()=>{s.stability=100;s.battleHP=100;document.getElementById('hpBar').style.width='100%';},msg:'HEAL: Полное восстановление!'}
+            'HEAL':{effect:()=>{s.stability=100;s.battleHP=100;updateUI();},msg:'HEAL: Полное восстановление!'}
         };
-
         function submitCode(){
             const v=document.getElementById('codeInput').value.trim().toUpperCase();
             if(codes[v]){codes[v].effect();showToast(codes[v].msg);document.getElementById('codeOk').style.display='block';document.getElementById('codeErr').style.display='none';updateUI();setTimeout(()=>closeModal('codeModal'),1500);}
@@ -410,39 +517,41 @@
 
         // ============ СОСТОЯНИЕ ============
         const s={thoughts:50,intellect:3,stability:100,level:1,stage:1,hacked:false,synapses:0,permanentBonus:1.0,quantum:20,patterns:10,souls:0,godMode:false,totalClicks:0,totalFed:0,achievements:[],quests:[],battleHP:100,battleEnemy:null,battleActive:false,atk:1,def:0};
+        let confirmCallback=null;
 
         // ============ 18 СУЩЕСТВ ============
         const bestiary=[
-            {name:'Атом',threshold:0,emoji:'○',sound:'chirp',svg:()=>`<circle cx="100" cy="100" r="22" fill="#8899aa" opacity="0.8"><animate attributeName="r" values="20;26;20" dur="2s" repeatCount="indefinite"/></circle><circle cx="100" cy="100" r="7" fill="#aabbcc"><animate attributeName="r" values="5;9;5" dur="2s" repeatCount="indefinite"/></circle><circle cx="84" cy="84" r="3.5" fill="#ccddee" opacity="0.6"><animate attributeName="cy" values="84;79;84" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="116" cy="90" r="2.8" fill="#ccddee" opacity="0.5"><animate attributeName="cy" values="90;83;90" dur="1.8s" repeatCount="indefinite"/></circle>`},
-            {name:'Молекула',threshold:8,emoji:'◎',sound:'chirp',svg:()=>`<circle cx="80" cy="100" r="16" fill="#7788aa"/><circle cx="120" cy="100" r="16" fill="#7788aa"/><circle cx="100" cy="78" r="16" fill="#7788aa"/><line x1="91" y1="93" x2="109" y2="93" stroke="#aabbcc" stroke-width="3"/><line x1="91" y1="93" x2="100" y2="78" stroke="#aabbcc" stroke-width="3"/><line x1="109" y1="93" x2="100" y2="78" stroke="#aabbcc" stroke-width="3"/><animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>`},
-            {name:'Вирус',threshold:16,emoji:'🦠',sound:'chirp',svg:()=>`<circle cx="100" cy="100" r="20" fill="#669966"/><circle cx="86" cy="86" r="9" fill="#88bb88"/><circle cx="114" cy="86" r="9" fill="#88bb88"/><circle cx="86" cy="114" r="9" fill="#88bb88"/><circle cx="114" cy="114" r="9" fill="#88bb88"/><circle cx="100" cy="76" r="7" fill="#88bb88"/><circle cx="100" cy="124" r="7" fill="#88bb88"/><circle cx="76" cy="100" r="7" fill="#88bb88"/><circle cx="124" cy="100" r="7" fill="#88bb88"/><circle cx="100" cy="100" r="5" fill="#aaddaa"><animate attributeName="r" values="3.5;7;3.5" dur="2s" repeatCount="indefinite"/></circle>`},
-            {name:'Бактерия',threshold:24,emoji:'🦠',sound:'chirp',svg:()=>`<ellipse cx="100" cy="100" rx="32" ry="14" fill="#88aa88" transform="rotate(-15 100 100)"/><ellipse cx="100" cy="100" rx="27" ry="10" fill="#aaccaa" transform="rotate(-15 100 100)"/><circle cx="76" cy="90" r="4.5" fill="#334433"/><circle cx="86" cy="88" r="3.5" fill="#334433"/><line x1="129" y1="105" x2="148" y2="114" stroke="#88aa88" stroke-width="2.5"/><line x1="127" y1="98" x2="146" y2="91" stroke="#88aa88" stroke-width="2.5"/><line x1="66" y1="95" x2="52" y2="90" stroke="#88aa88" stroke-width="2.5"/><animateTransform attributeName="transform" type="rotate" values="-15 100 100;-10 100 100;-15 100 100" dur="4s" repeatCount="indefinite"/>`},
-            {name:'Амёба',threshold:30,emoji:'🫧',sound:'purr',svg:()=>`<path d="M70 100 Q60 70 85 65 Q100 60 115 65 Q140 70 135 95 Q140 120 115 130 Q100 135 85 130 Q60 125 70 100Z" fill="#9988aa" opacity="0.8"><animate attributeName="d" values="M70 100 Q60 70 85 65 Q100 60 115 65 Q140 70 135 95 Q140 120 115 130 Q100 135 85 130 Q60 125 70 100Z;M65 100 Q55 75 80 70 Q100 62 120 68 Q145 75 140 100 Q145 125 120 132 Q100 138 80 132 Q55 130 65 100Z;M70 100 Q60 70 85 65 Q100 60 115 65 Q140 70 135 95 Q140 120 115 130 Q100 135 85 130 Q60 125 70 100Z" dur="5s" repeatCount="indefinite"/></path><circle cx="90" cy="90" r="3.5" fill="#bbaa88"><animate attributeName="cx" values="88;92;88" dur="3s" repeatCount="indefinite"/></circle><circle cx="110" cy="95" r="2.8" fill="#bbaa88"><animate attributeName="cx" values="112;108;112" dur="2.5s" repeatCount="indefinite"/></circle>`},
-            {name:'Планктон',threshold:36,emoji:'🦐',sound:'purr',svg:()=>`<ellipse cx="100" cy="105" rx="16" ry="25" fill="#aa8899" opacity="0.8"/><circle cx="100" cy="79" r="13" fill="#ccaaaa"/><circle cx="96" cy="75" r="3.5" fill="#221122"/><circle cx="104" cy="75" r="3.5" fill="#221122"/><circle cx="94" cy="76" r="1.3" fill="#fff"/><circle cx="102" cy="76" r="1.3" fill="#fff"/><line x1="86" y1="91" x2="67" y2="82" stroke="#aa8899" stroke-width="1.8"/><line x1="86" y1="96" x2="63" y2="101" stroke="#aa8899" stroke-width="1.8"/><line x1="114" y1="91" x2="133" y2="82" stroke="#aa8899" stroke-width="1.8"/><line x1="114" y1="96" x2="137" y2="101" stroke="#aa8899" stroke-width="1.8"/><animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>`},
-            {name:'Светлячок',threshold:42,emoji:'🪲',sound:'chirp',svg:()=>`<defs><radialGradient id="g1"><stop offset="0%" stop-color="#fff8dc" stop-opacity="0.9"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/></radialGradient></defs><ellipse cx="100" cy="120" rx="11" ry="18" fill="#3a3028"/><circle cx="100" cy="93" r="9" fill="#4a4038"/><circle cx="97" cy="90" r="2.3" fill="#fff8dc"/><circle cx="103" cy="90" r="2.3" fill="#fff8dc"/><path d="M97 83 Q87 66 78 60" stroke="#8a8070" stroke-width="1.3" fill="none"/><path d="M103 83 Q113 66 122 60" stroke="#8a8070" stroke-width="1.3" fill="none"/><circle cx="78" cy="60" r="1.8" fill="#ffd700"><animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="122" cy="60" r="1.8" fill="#ffd700"><animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/></circle><ellipse cx="69" cy="111" rx="24" ry="15" fill="#8a8070" opacity="0.4" transform="rotate(-20 69 111)"/><ellipse cx="131" cy="111" rx="24" ry="15" fill="#8a8070" opacity="0.4" transform="rotate(20 131 111)"/><circle cx="100" cy="136" r="13" fill="url(#g1)" opacity="0.5"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="2s" repeatCount="indefinite"/></circle>`},
-            {name:'Лис',threshold:50,emoji:'🦊',sound:'purr',svg:()=>`<path d="M141 138 Q170 118 180 88 Q185 73 176 78 Q166 83 161 98 Q156 113 141 128" fill="#c47030" stroke="#a05020" stroke-width="1.3"/><path d="M176 78 Q179 76 181 80 Q183 86 179 90" fill="#f0e0c0"/><ellipse cx="100" cy="128" rx="24" ry="17" fill="#d08040"/><ellipse cx="100" cy="132" rx="13" ry="11" fill="#f0e0c0"/><ellipse cx="100" cy="97" rx="19" ry="17" fill="#d08040"/><polygon points="83,87 77,62 90,79" fill="#d08040"/><polygon points="84,84 79,66 88,80" fill="#f0b0a0"/><polygon points="117,87 123,62 110,79" fill="#d08040"/><polygon points="116,84 121,66 112,80" fill="#f0b0a0"/><ellipse cx="100" cy="101" rx="9" ry="6.5" fill="#f0e0c0"/><ellipse cx="100" cy="98" rx="2.8" ry="2" fill="#2a1a1a"/><ellipse cx="93" cy="92" rx="3.8" ry="4.8" fill="#2a1a1a"/><ellipse cx="107" cy="92" rx="3.8" ry="4.8" fill="#2a1a1a"/><circle cx="94" cy="90" r="1.6" fill="#ffe8a0"/><circle cx="108" cy="90" r="1.6" fill="#ffe8a0"/><ellipse cx="81" cy="147" rx="7.5" ry="4" fill="#d08040"/><ellipse cx="119" cy="147" rx="7.5" ry="4" fill="#d08040"/>`},
-            {name:'Сова',threshold:58,emoji:'🦉',sound:'echo',svg:()=>`<ellipse cx="100" cy="124" rx="26" ry="24" fill="#6a5a4a"/><circle cx="100" cy="90" r="24" fill="#6a5a4a"/><polygon points="77,77 71,52 88,73" fill="#6a5a4a"/><polygon points="79,74 73,56 86,72" fill="#9a8a7a"/><polygon points="123,77 129,52 112,73" fill="#6a5a4a"/><polygon points="121,74 127,56 114,72" fill="#9a8a7a"/><circle cx="91" cy="86" r="10" fill="#f0e8d0"/><circle cx="109" cy="86" r="10" fill="#f0e8d0"/><circle cx="91" cy="86" r="5" fill="#1a1a1a"/><circle cx="109" cy="86" r="5" fill="#1a1a1a"/><circle cx="89" cy="84" r="2.2" fill="#fff"/><circle cx="107" cy="84" r="2.2" fill="#fff"/><ellipse cx="100" cy="98" rx="6.5" ry="3.2" fill="#8a7a6a"/><ellipse cx="81" cy="149" rx="8.5" ry="5" fill="#6a5a4a"/><ellipse cx="119" cy="149" rx="8.5" ry="5" fill="#6a5a4a"/>`},
-            {name:'Волк',threshold:64,emoji:'🐺',sound:'howl',svg:()=>`<path d="M134 134 Q163 114 173 94 Q176 84 170 87 Q163 91 156 104 Q150 117 137 127" fill="#8a8a9a" stroke="#6a6a7a" stroke-width="1.3"/><ellipse cx="100" cy="124" rx="28" ry="19" fill="#9a9aaa"/><ellipse cx="100" cy="129" rx="15" ry="11" fill="#c0c0d0"/><ellipse cx="100" cy="90" rx="23" ry="19" fill="#9a9aaa"/><polygon points="79,80 69,55 90,72" fill="#9a9aaa"/><polygon points="81,78 73,59 88,74" fill="#c0a0b0"/><polygon points="121,80 131,55 110,72" fill="#9a9aaa"/><polygon points="119,78 127,59 112,74" fill="#c0a0b0"/><ellipse cx="100" cy="98" rx="11" ry="8.5" fill="#d0d0e0"/><ellipse cx="100" cy="94" rx="3.8" ry="2.8" fill="#2a2a3a"/><ellipse cx="92" cy="88" rx="4.8" ry="5.2" fill="#3a3a4a"/><ellipse cx="108" cy="88" rx="4.8" ry="5.2" fill="#3a3a4a"/><circle cx="93" cy="86" r="1.8" fill="#e0e8f0"/><circle cx="109" cy="86" r="1.8" fill="#e0e8f0"/><ellipse cx="81" cy="147" rx="8.5" ry="5" fill="#9a9aaa"/><ellipse cx="119" cy="147" rx="8.5" ry="5" fill="#9a9aaa"/>`},
-            {name:'Пантера',threshold:70,emoji:'🐆',sound:'purr',svg:()=>`<path d="M144 134 Q173 109 180 84 Q183 69 173 73 Q163 77 158 94 Q153 111 139 127" fill="#2a2a3a" stroke="#4a4a5a" stroke-width="1.3"/><ellipse cx="100" cy="124" rx="30" ry="19" fill="#1a1a2a"/><ellipse cx="100" cy="129" rx="17" ry="11" fill="#3a3a4a"/><ellipse cx="100" cy="88" rx="23" ry="19" fill="#1a1a2a"/><polygon points="79,78 71,49 90,70" fill="#1a1a2a"/><polygon points="81,76 74,53 88,72" fill="#4a4a5a"/><polygon points="121,78 129,49 110,70" fill="#1a1a2a"/><polygon points="119,76 126,53 112,72" fill="#4a4a5a"/><ellipse cx="93" cy="86" rx="4.8" ry="5.8" fill="#ffd700"/><ellipse cx="107" cy="86" rx="4.8" ry="5.8" fill="#ffd700"/><ellipse cx="93" cy="86" rx="2.3" ry="4.8" fill="#0a0a0a"/><ellipse cx="107" cy="86" rx="2.3" ry="4.8" fill="#0a0a0a"/><ellipse cx="81" cy="147" rx="9.5" ry="5" fill="#1a1a2a"/><ellipse cx="119" cy="147" rx="9.5" ry="5" fill="#1a1a2a"/>`},
-            {name:'Феникс',threshold:76,emoji:'🦅',sound:'echo',svg:()=>`<defs><radialGradient id="g2"><stop offset="0%" stop-color="#ff9944" stop-opacity="0.8"/><stop offset="100%" stop-color="#ff4400" stop-opacity="0"/></radialGradient></defs><path d="M70 90 Q30 40 20 25 Q15 16 22 20 Q38 32 52 50 Q35 28 28 14 Q32 10 38 16 Q52 34 62 55" fill="#cc4400" opacity="0.6"/><path d="M130 90 Q170 40 180 25 Q185 16 178 20 Q162 32 148 50 Q165 28 172 14 Q168 10 162 16 Q148 34 138 55" fill="#cc4400" opacity="0.6"/><ellipse cx="100" cy="120" rx="22" ry="26" fill="#dd5500"/><circle cx="100" cy="89" r="19" fill="#dd5500"/><circle cx="93" cy="85" r="4.2" fill="#ffdd00"/><circle cx="107" cy="85" r="4.2" fill="#ffdd00"/><circle cx="93" cy="85" r="1.8" fill="#fff"/><circle cx="107" cy="85" r="1.8" fill="#fff"/><ellipse cx="100" cy="97" rx="6.5" ry="2.8" fill="#ff8800"/><circle cx="100" cy="110" r="42" fill="url(#g2)" opacity="0.4"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite"/></circle>`},
-            {name:'Дракон',threshold:82,emoji:'🐉',sound:'roar',svg:()=>`<defs><radialGradient id="g3"><stop offset="0%" stop-color="#fff8e0" stop-opacity="0.7"/><stop offset="100%" stop-color="#ff8800" stop-opacity="0"/></radialGradient></defs><path d="M70 100 Q30 50 20 30 Q15 20 25 25 Q40 35 55 55 Q40 30 35 15 Q38 12 42 18 Q55 35 65 55" fill="#8a6040" opacity="0.6" stroke="#d4a060" stroke-width="1.3"/><path d="M130 100 Q170 50 180 30 Q185 20 175 25 Q160 35 145 55 Q160 30 165 15 Q162 12 158 18 Q145 35 135 55" fill="#8a6040" opacity="0.6" stroke="#d4a060" stroke-width="1.3"/><path d="M113 139 Q153 127 173 160 Q183 175 192 166 Q196 158 187 172" fill="none" stroke="#d4a060" stroke-width="4.5" stroke-linecap="round"/><path d="M187 172 L196 166 L190 180 Z" fill="#d4a060"/><ellipse cx="100" cy="124" rx="30" ry="21" fill="#6a4a2a"/><ellipse cx="100" cy="86" rx="23" ry="19" fill="#6a4a2a"/><path d="M79 73 Q71 47 62 37" stroke="#d4a060" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M121 73 Q129 47 138 37" stroke="#d4a060" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="90" cy="82" rx="4.8" ry="5.8" fill="#ffd700"/><ellipse cx="110" cy="82" rx="4.8" ry="5.8" fill="#ffd700"/><ellipse cx="90" cy="82" rx="2.3" ry="4.8" fill="#1a1a1a"/><ellipse cx="110" cy="82" rx="2.3" ry="4.8" fill="#1a1a1a"/><circle cx="100" cy="110" r="48" fill="url(#g3)" opacity="0.4"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite"/></circle>`},
-            {name:'Кракен',threshold:87,emoji:'🐙',sound:'roar',svg:()=>`<ellipse cx="100" cy="95" rx="26" ry="22" fill="#4a3060"/><circle cx="89" cy="81" r="7.5" fill="#6a5090"/><circle cx="111" cy="81" r="7.5" fill="#6a5090"/><circle cx="89" cy="81" r="3.5" fill="#1a0a2a"/><circle cx="111" cy="81" r="3.5" fill="#1a0a2a"/><path d="M71 110 Q41 138 27 123 Q18 114 32 107" stroke="#4a3060" stroke-width="5.5" fill="none" stroke-linecap="round"><animate attributeName="d" values="M71 110 Q41 138 27 123 Q18 114 32 107;M71 110 Q36 143 22 126 Q14 116 30 109;M71 110 Q41 138 27 123 Q18 114 32 107" dur="3s" repeatCount="indefinite"/></path><path d="M81 114 Q62 152 48 137 Q38 128 52 119" stroke="#4a3060" stroke-width="5.5" fill="none" stroke-linecap="round"><animate attributeName="d" values="M81 114 Q62 152 48 137 Q38 128 52 119;M81 114 Q57 157 43 142 Q34 133 50 121;M81 114 Q62 152 48 137 Q38 128 52 119" dur="2.5s" repeatCount="indefinite"/></path><path d="M129 110 Q159 138 173 123 Q182 114 168 107" stroke="#4a3060" stroke-width="5.5" fill="none" stroke-linecap="round"><animate attributeName="d" values="M129 110 Q159 138 173 123 Q182 114 168 107;M129 110 Q164 143 178 126 Q186 116 170 109;M129 110 Q159 138 173 123 Q182 114 168 107" dur="3.2s" repeatCount="indefinite"/></path><path d="M119 114 Q138 152 152 137 Q162 128 148 119" stroke="#4a3060" stroke-width="5.5" fill="none" stroke-linecap="round"><animate attributeName="d" values="M119 114 Q138 152 152 137 Q162 128 148 119;M119 114 Q143 157 157 142 Q166 133 150 121;M119 114 Q138 152 152 137 Q162 128 148 119" dur="2.8s" repeatCount="indefinite"/></path>`},
-            {name:'Голем',threshold:91,emoji:'🗿',sound:'roar',svg:()=>`<rect x="72" y="66" width="56" height="72" rx="9" fill="#6a6a6a"/><rect x="82" y="76" width="36" height="14" rx="4" fill="#8a8a8a"/><circle cx="89" cy="82" r="3.8" fill="#ffaa00"/><circle cx="111" cy="82" r="3.8" fill="#ffaa00"/><line x1="89" y1="92" x2="111" y2="92" stroke="#4a4a4a" stroke-width="2.5"/><rect x="62" y="61" width="18" height="18" rx="4" fill="#5a5a5a"/><rect x="120" y="61" width="18" height="18" rx="4" fill="#5a5a5a"/><rect x="76" y="139" width="18" height="23" rx="4" fill="#5a5a5a"/><rect x="106" y="139" width="18" height="23" rx="4" fill="#5a5a5a"/><animate attributeName="opacity" values="0.8;1;0.8" dur="4s" repeatCount="indefinite"/>`},
-            {name:'Титан',threshold:95,emoji:'👁️',sound:'cosmic',svg:()=>`<defs><radialGradient id="g4"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="100%" stop-color="#6666aa" stop-opacity="0"/></radialGradient></defs><circle cx="100" cy="100" r="52" fill="url(#g4)" opacity="0.3"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite"/></circle><circle cx="100" cy="100" r="26" fill="#444466"/><circle cx="100" cy="100" r="17" fill="#8888cc"/><circle cx="100" cy="100" r="9" fill="#ccccff"><animate attributeName="r" values="7;11;7" dur="2s" repeatCount="indefinite"/></circle><circle cx="100" cy="100" r="3.5" fill="#fff"><animate attributeName="r" values="2.5;4.5;2.5" dur="1.5s" repeatCount="indefinite"/></circle>`},
-            {name:'Космо-Дракон',threshold:98,emoji:'✨',sound:'cosmic',svg:()=>`<defs><radialGradient id="g5"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="30%" stop-color="#e0e8ff" stop-opacity="0.5"/><stop offset="100%" stop-color="#8090d0" stop-opacity="0"/></radialGradient></defs><circle cx="100" cy="100" r="68" fill="url(#g5)" opacity="0.3"><animate attributeName="r" values="63;73;63" dur="4s" repeatCount="indefinite"/></circle><path d="M60 100 Q20 40 15 20 Q10 8 22 15 Q38 30 52 50 Q35 25 28 10 Q32 6 38 14 Q52 34 62 55" fill="#6a6a9a" opacity="0.6" stroke="#a0a0d0" stroke-width="1.3"/><path d="M140 100 Q180 40 185 20 Q190 8 178 15 Q162 30 148 50 Q165 25 172 10 Q168 6 162 14 Q148 34 138 55" fill="#6a6a9a" opacity="0.6" stroke="#a0a0d0" stroke-width="1.3"/><path d="M116 144 Q158 130 183 167 Q196 186 207 175 Q213 165 201 181" fill="none" stroke="#c0c0e0" stroke-width="4.5" stroke-linecap="round"/><path d="M201 181 L213 175 L205 191 Z" fill="#c0c0e0"/><ellipse cx="100" cy="124" rx="32" ry="23" fill="#2a2a4a"/><circle cx="96" cy="108" r="1.8" fill="#fff" opacity="0.8"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite"/></circle><circle cx="109" cy="112" r="1.4" fill="#fff" opacity="0.6"><animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.8s" repeatCount="indefinite"/></circle><ellipse cx="100" cy="87" rx="25" ry="21" fill="#2a2a4a"/><path d="M77 71 Q67 41 55 31" stroke="#c0c0e0" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M123 71 Q133 41 145 31" stroke="#c0c0e0" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="89" cy="82" rx="5.8" ry="6.2" fill="#ffffff"/><ellipse cx="111" cy="82" rx="5.8" ry="6.2" fill="#ffffff"/><ellipse cx="89" cy="82" rx="2.6" ry="4.8" fill="#1a1a3a"/><ellipse cx="111" cy="82" rx="2.6" ry="4.8" fill="#1a1a3a"/>`}
+            {name:'Атом',threshold:0,emoji:'○',sound:'chirp',desc:'Первичная форма существования. Чистая энергия.',svg:()=>`<circle cx="100" cy="100" r="22" fill="#8899aa" opacity="0.8"><animate attributeName="r" values="20;26;20" dur="2s" repeatCount="indefinite"/></circle><circle cx="100" cy="100" r="7" fill="#aabbcc"><animate attributeName="r" values="5;9;5" dur="2s" repeatCount="indefinite"/></circle><circle cx="84" cy="84" r="3.5" fill="#ccddee" opacity="0.6"><animate attributeName="cy" values="84;79;84" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="116" cy="90" r="2.8" fill="#ccddee" opacity="0.5"><animate attributeName="cy" values="90;83;90" dur="1.8s" repeatCount="indefinite"/></circle>`},
+            {name:'Молекула',threshold:8,emoji:'◎',sound:'chirp',desc:'Связь атомов. Начало структуры.',svg:()=>`<circle cx="80" cy="100" r="16" fill="#7788aa"/><circle cx="120" cy="100" r="16" fill="#7788aa"/><circle cx="100" cy="78" r="16" fill="#7788aa"/><line x1="91" y1="93" x2="109" y2="93" stroke="#aabbcc" stroke-width="3"/><line x1="91" y1="93" x2="100" y2="78" stroke="#aabbcc" stroke-width="3"/><line x1="109" y1="93" x2="100" y2="78" stroke="#aabbcc" stroke-width="3"/><animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>`},
+            {name:'Вирус',threshold:16,emoji:'🦠',sound:'chirp',desc:'Пограничная форма. Между живым и мёртвым.',svg:()=>`<circle cx="100" cy="100" r="20" fill="#669966"/><circle cx="86" cy="86" r="9" fill="#88bb88"/><circle cx="114" cy="86" r="9" fill="#88bb88"/><circle cx="86" cy="114" r="9" fill="#88bb88"/><circle cx="114" cy="114" r="9" fill="#88bb88"/><circle cx="100" cy="76" r="7" fill="#88bb88"/><circle cx="100" cy="124" r="7" fill="#88bb88"/><circle cx="76" cy="100" r="7" fill="#88bb88"/><circle cx="124" cy="100" r="7" fill="#88bb88"/><circle cx="100" cy="100" r="5" fill="#aaddaa"><animate attributeName="r" values="3.5;7;3.5" dur="2s" repeatCount="indefinite"/></circle>`},
+            {name:'Бактерия',threshold:24,emoji:'🦠',sound:'chirp',desc:'Одноклеточная жизнь. Движение.',svg:()=>`<ellipse cx="100" cy="100" rx="32" ry="14" fill="#88aa88" transform="rotate(-15 100 100)"/><ellipse cx="100" cy="100" rx="27" ry="10" fill="#aaccaa" transform="rotate(-15 100 100)"/><circle cx="76" cy="90" r="4.5" fill="#334433"/><circle cx="86" cy="88" r="3.5" fill="#334433"/><line x1="129" y1="105" x2="148" y2="114" stroke="#88aa88" stroke-width="2.5"/><line x1="127" y1="98" x2="146" y2="91" stroke="#88aa88" stroke-width="2.5"/><line x1="66" y1="95" x2="52" y2="90" stroke="#88aa88" stroke-width="2.5"/><animateTransform attributeName="transform" type="rotate" values="-15 100 100;-10 100 100;-15 100 100" dur="4s" repeatCount="indefinite"/>`},
+            {name:'Амёба',threshold:30,emoji:'🫧',sound:'purr',desc:'Гибкая форма. Адаптация.',svg:()=>`<path d="M70 100 Q60 70 85 65 Q100 60 115 65 Q140 70 135 95 Q140 120 115 130 Q100 135 85 130 Q60 125 70 100Z" fill="#9988aa" opacity="0.8"><animate attributeName="d" values="M70 100 Q60 70 85 65 Q100 60 115 65 Q140 70 135 95 Q140 120 115 130 Q100 135 85 130 Q60 125 70 100Z;M65 100 Q55 75 80 70 Q100 62 120 68 Q145 75 140 100 Q145 125 120 132 Q100 138 80 132 Q55 130 65 100Z;M70 100 Q60 70 85 65 Q100 60 115 65 Q140 70 135 95 Q140 120 115 130 Q100 135 85 130 Q60 125 70 100Z" dur="5s" repeatCount="indefinite"/></path><circle cx="90" cy="90" r="3.5" fill="#bbaa88"><animate attributeName="cx" values="88;92;88" dur="3s" repeatCount="indefinite"/></circle><circle cx="110" cy="95" r="2.8" fill="#bbaa88"><animate attributeName="cx" values="112;108;112" dur="2.5s" repeatCount="indefinite"/></circle>`},
+            {name:'Планктон',threshold:36,emoji:'🦐',sound:'purr',desc:'Морская искра. Начало сложности.',svg:()=>`<ellipse cx="100" cy="105" rx="16" ry="25" fill="#aa8899" opacity="0.8"/><circle cx="100" cy="79" r="13" fill="#ccaaaa"/><circle cx="96" cy="75" r="3.5" fill="#221122"/><circle cx="104" cy="75" r="3.5" fill="#221122"/><circle cx="94" cy="76" r="1.3" fill="#fff"/><circle cx="102" cy="76" r="1.3" fill="#fff"/><line x1="86" y1="91" x2="67" y2="82" stroke="#aa8899" stroke-width="1.8"/><line x1="86" y1="96" x2="63" y2="101" stroke="#aa8899" stroke-width="1.8"/><line x1="114" y1="91" x2="133" y2="82" stroke="#aa8899" stroke-width="1.8"/><line x1="114" y1="96" x2="137" y2="101" stroke="#aa8899" stroke-width="1.8"/><animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>`},
+            {name:'Светлячок',threshold:42,emoji:'🪲',sound:'chirp',desc:'Первое свечение. Свет во тьме.',svg:()=>`<defs><radialGradient id="g1"><stop offset="0%" stop-color="#fff8dc" stop-opacity="0.9"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/></radialGradient></defs><ellipse cx="100" cy="120" rx="11" ry="18" fill="#3a3028"/><circle cx="100" cy="93" r="9" fill="#4a4038"/><circle cx="97" cy="90" r="2.3" fill="#fff8dc"/><circle cx="103" cy="90" r="2.3" fill="#fff8dc"/><path d="M97 83 Q87 66 78 60" stroke="#8a8070" stroke-width="1.3" fill="none"/><path d="M103 83 Q113 66 122 60" stroke="#8a8070" stroke-width="1.3" fill="none"/><circle cx="78" cy="60" r="1.8" fill="#ffd700"><animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="122" cy="60" r="1.8" fill="#ffd700"><animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/></circle><ellipse cx="69" cy="111" rx="24" ry="15" fill="#8a8070" opacity="0.4" transform="rotate(-20 69 111)"/><ellipse cx="131" cy="111" rx="24" ry="15" fill="#8a8070" opacity="0.4" transform="rotate(20 131 111)"/><circle cx="100" cy="136" r="13" fill="url(#g1)" opacity="0.5"><animate attributeName="opacity" values="0.2;0.6;0.2" dur="2s" repeatCount="indefinite"/></circle>`},
+            {name:'Лис',threshold:50,emoji:'🦊',sound:'purr',desc:'Хитрость. Интеллект.',svg:()=>`<path d="M141 138 Q170 118 180 88 Q185 73 176 78 Q166 83 161 98 Q156 113 141 128" fill="#c47030" stroke="#a05020" stroke-width="1.3"/><path d="M176 78 Q179 76 181 80 Q183 86 179 90" fill="#f0e0c0"/><ellipse cx="100" cy="128" rx="24" ry="17" fill="#d08040"/><ellipse cx="100" cy="132" rx="13" ry="11" fill="#f0e0c0"/><ellipse cx="100" cy="97" rx="19" ry="17" fill="#d08040"/><polygon points="83,87 77,62 90,79" fill="#d08040"/><polygon points="84,84 79,66 88,80" fill="#f0b0a0"/><polygon points="117,87 123,62 110,79" fill="#d08040"/><polygon points="116,84 121,66 112,80" fill="#f0b0a0"/><ellipse cx="100" cy="101" rx="9" ry="6.5" fill="#f0e0c0"/><ellipse cx="100" cy="98" rx="2.8" ry="2" fill="#2a1a1a"/><ellipse cx="93" cy="92" rx="3.8" ry="4.8" fill="#2a1a1a"/><ellipse cx="107" cy="92" rx="3.8" ry="4.8" fill="#2a1a1a"/><circle cx="94" cy="90" r="1.6" fill="#ffe8a0"/><circle cx="108" cy="90" r="1.6" fill="#ffe8a0"/><ellipse cx="81" cy="147" rx="7.5" ry="4" fill="#d08040"/><ellipse cx="119" cy="147" rx="7.5" ry="4" fill="#d08040"/>`},
+            {name:'Сова',threshold:58,emoji:'🦉',sound:'echo',desc:'Мудрость. Ночное зрение.',svg:()=>`<ellipse cx="100" cy="124" rx="26" ry="24" fill="#6a5a4a"/><circle cx="100" cy="90" r="24" fill="#6a5a4a"/><polygon points="77,77 71,52 88,73" fill="#6a5a4a"/><polygon points="79,74 73,56 86,72" fill="#9a8a7a"/><polygon points="123,77 129,52 112,73" fill="#6a5a4a"/><polygon points="121,74 127,56 114,72" fill="#9a8a7a"/><circle cx="91" cy="86" r="10" fill="#f0e8d0"/><circle cx="109" cy="86" r="10" fill="#f0e8d0"/><circle cx="91" cy="86" r="5" fill="#1a1a1a"/><circle cx="109" cy="86" r="5" fill="#1a1a1a"/><circle cx="89" cy="84" r="2.2" fill="#fff"/><circle cx="107" cy="84" r="2.2" fill="#fff"/><ellipse cx="100" cy="98" rx="6.5" ry="3.2" fill="#8a7a6a"/><ellipse cx="81" cy="149" rx="8.5" ry="5" fill="#6a5a4a"/><ellipse cx="119" cy="149" rx="8.5" ry="5" fill="#6a5a4a"/>`},
+            {name:'Волк',threshold:64,emoji:'🐺',sound:'howl',desc:'Стая. Сила в единстве.',svg:()=>`<path d="M134 134 Q163 114 173 94 Q176 84 170 87 Q163 91 156 104 Q150 117 137 127" fill="#8a8a9a" stroke="#6a6a7a" stroke-width="1.3"/><ellipse cx="100" cy="124" rx="28" ry="19" fill="#9a9aaa"/><ellipse cx="100" cy="129" rx="15" ry="11" fill="#c0c0d0"/><ellipse cx="100" cy="90" rx="23" ry="19" fill="#9a9aaa"/><polygon points="79,80 69,55 90,72" fill="#9a9aaa"/><polygon points="81,78 73,59 88,74" fill="#c0a0b0"/><polygon points="121,80 131,55 110,72" fill="#9a9aaa"/><polygon points="119,78 127,59 112,74" fill="#c0a0b0"/><ellipse cx="100" cy="98" rx="11" ry="8.5" fill="#d0d0e0"/><ellipse cx="100" cy="94" rx="3.8" ry="2.8" fill="#2a2a3a"/><ellipse cx="92" cy="88" rx="4.8" ry="5.2" fill="#3a3a4a"/><ellipse cx="108" cy="88" rx="4.8" ry="5.2" fill="#3a3a4a"/><circle cx="93" cy="86" r="1.8" fill="#e0e8f0"/><circle cx="109" cy="86" r="1.8" fill="#e0e8f0"/><ellipse cx="81" cy="147" rx="8.5" ry="5" fill="#9a9aaa"/><ellipse cx="119" cy="147" rx="8.5" ry="5" fill="#9a9aaa"/>`},
+            {name:'Пантера',threshold:70,emoji:'🐆',sound:'purr',desc:'Скрытность. Ночная охота.',svg:()=>`<path d="M144 134 Q173 109 180 84 Q183 69 173 73 Q163 77 158 94 Q153 111 139 127" fill="#2a2a3a" stroke="#4a4a5a" stroke-width="1.3"/><ellipse cx="100" cy="124" rx="30" ry="19" fill="#1a1a2a"/><ellipse cx="100" cy="129" rx="17" ry="11" fill="#3a3a4a"/><ellipse cx="100" cy="88" rx="23" ry="19" fill="#1a1a2a"/><polygon points="79,78 71,49 90,70" fill="#1a1a2a"/><polygon points="81,76 74,53 88,72" fill="#4a4a5a"/><polygon points="121,78 129,49 110,70" fill="#1a1a2a"/><polygon points="119,76 126,53 112,72" fill="#4a4a5a"/><ellipse cx="93" cy="86" rx="4.8" ry="5.8" fill="#ffd700"/><ellipse cx="107" cy="86" rx="4.8" ry="5.8" fill="#ffd700"/><ellipse cx="93" cy="86" rx="2.3" ry="4.8" fill="#0a0a0a"/><ellipse cx="107" cy="86" rx="2.3" ry="4.8" fill="#0a0a0a"/><ellipse cx="81" cy="147" rx="9.5" ry="5" fill="#1a1a2a"/><ellipse cx="119" cy="147" rx="9.5" ry="5" fill="#1a1a2a"/>`},
+            {name:'Феникс',threshold:76,emoji:'🦅',sound:'echo',desc:'Возрождение. Огонь жизни.',svg:()=>`<defs><radialGradient id="g2"><stop offset="0%" stop-color="#ff9944" stop-opacity="0.8"/><stop offset="100%" stop-color="#ff4400" stop-opacity="0"/></radialGradient></defs><path d="M70 90 Q30 40 20 25 Q15 16 22 20 Q38 32 52 50 Q35 28 28 14 Q32 10 38 16 Q52 34 62 55" fill="#cc4400" opacity="0.6"/><path d="M130 90 Q170 40 180 25 Q185 16 178 20 Q162 32 148 50 Q165 28 172 14 Q168 10 162 16 Q148 34 138 55" fill="#cc4400" opacity="0.6"/><ellipse cx="100" cy="120" rx="22" ry="26" fill="#dd5500"/><circle cx="100" cy="89" r="19" fill="#dd5500"/><circle cx="93" cy="85" r="4.2" fill="#ffdd00"/><circle cx="107" cy="85" r="4.2" fill="#ffdd00"/><circle cx="93" cy="85" r="1.8" fill="#fff"/><circle cx="107" cy="85" r="1.8" fill="#fff"/><ellipse cx="100" cy="97" rx="6.5" ry="2.8" fill="#ff8800"/><circle cx="100" cy="110" r="42" fill="url(#g2)" opacity="0.4"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite"/></circle>`},
+            {name:'Дракон',threshold:82,emoji:'🐉',sound:'roar',desc:'Мифическая мощь. Стихия.',svg:()=>`<defs><radialGradient id="g3"><stop offset="0%" stop-color="#fff8e0" stop-opacity="0.7"/><stop offset="100%" stop-color="#ff8800" stop-opacity="0"/></radialGradient></defs><path d="M70 100 Q30 50 20 30 Q15 20 25 25 Q40 35 55 55 Q40 30 35 15 Q38 12 42 18 Q55 35 65 55" fill="#8a6040" opacity="0.6" stroke="#d4a060" stroke-width="1.3"/><path d="M130 100 Q170 50 180 30 Q185 20 175 25 Q160 35 145 55 Q160 30 165 15 Q162 12 158 18 Q145 35 135 55" fill="#8a6040" opacity="0.6" stroke="#d4a060" stroke-width="1.3"/><path d="M113 139 Q153 127 173 160 Q183 175 192 166 Q196 158 187 172" fill="none" stroke="#d4a060" stroke-width="4.5" stroke-linecap="round"/><path d="M187 172 L196 166 L190 180 Z" fill="#d4a060"/><ellipse cx="100" cy="124" rx="30" ry="21" fill="#6a4a2a"/><ellipse cx="100" cy="86" rx="23" ry="19" fill="#6a4a2a"/><path d="M79 73 Q71 47 62 37" stroke="#d4a060" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M121 73 Q129 47 138 37" stroke="#d4a060" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="90" cy="82" rx="4.8" ry="5.8" fill="#ffd700"/><ellipse cx="110" cy="82" rx="4.8" ry="5.8" fill="#ffd700"/><ellipse cx="90" cy="82" rx="2.3" ry="4.8" fill="#1a1a1a"/><ellipse cx="110" cy="82" rx="2.3" ry="4.8" fill="#1a1a1a"/><circle cx="100" cy="110" r="48" fill="url(#g3)" opacity="0.4"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite"/></circle>`},
+            {name:'Кракен',threshold:87,emoji:'🐙',sound:'roar',desc:'Глубинный ужас. Бездна.',svg:()=>`<ellipse cx="100" cy="95" rx="26" ry="22" fill="#4a3060"/><circle cx="89" cy="81" r="7.5" fill="#6a5090"/><circle cx="111" cy="81" r="7.5" fill="#6a5090"/><circle cx="89" cy="81" r="3.5" fill="#1a0a2a"/><circle cx="111" cy="81" r="3.5" fill="#1a0a2a"/><path d="M71 110 Q41 138 27 123 Q18 114 32 107" stroke="#4a3060" stroke-width="5.5" fill="none" stroke-linecap="round"><animate attributeName="d" values="M71 110 Q41 138 27 123 Q18 114 32 107;M71 110 Q36 143 22 126 Q14 116 30 109;M71 110 Q41 138 27 123 Q18 114 32 107" dur="3s" repeatCount="indefinite"/></path><path d="M81 114 Q62 152 48 137 Q38 128 52 119" stroke="#4a3060" stroke-width="5.5" fill="none" stroke-linecap="round"><animate attributeName="d" values="M81 114 Q62 152 48 137 Q38 128 52 119;M81 114 Q57 157 43 142 Q34 133 50 121;M81 114 Q62 152 48 137 Q38 128 52 119" dur="2.5s" repeatCount="indefinite"/></path><path d="M129 110 Q159 138 173 123 Q182 114 168 107" stroke="#4a3060" stroke-width="5.5" fill="none" stroke-linecap="round"><animate attributeName="d" values="M129 110 Q159 138 173 123 Q182 114 168 107;M129 110 Q164 143 178 126 Q186 116 170 109;M129 110 Q159 138 173 123 Q182 114 168 107" dur="3.2s" repeatCount="indefinite"/></path><path d="M119 114 Q138 152 152 137 Q162 128 148 119" stroke="#4a3060" stroke-width="5.5" fill="none" stroke-linecap="round"><animate attributeName="d" values="M119 114 Q138 152 152 137 Q162 128 148 119;M119 114 Q143 157 157 142 Q166 133 150 121;M119 114 Q138 152 152 137 Q162 128 148 119" dur="2.8s" repeatCount="indefinite"/></path>`},
+            {name:'Голем',threshold:91,emoji:'🗿',sound:'roar',desc:'Каменная воля. Несокрушимость.',svg:()=>`<rect x="72" y="66" width="56" height="72" rx="9" fill="#6a6a6a"/><rect x="82" y="76" width="36" height="14" rx="4" fill="#8a8a8a"/><circle cx="89" cy="82" r="3.8" fill="#ffaa00"/><circle cx="111" cy="82" r="3.8" fill="#ffaa00"/><line x1="89" y1="92" x2="111" y2="92" stroke="#4a4a4a" stroke-width="2.5"/><rect x="62" y="61" width="18" height="18" rx="4" fill="#5a5a5a"/><rect x="120" y="61" width="18" height="18" rx="4" fill="#5a5a5a"/><rect x="76" y="139" width="18" height="23" rx="4" fill="#5a5a5a"/><rect x="106" y="139" width="18" height="23" rx="4" fill="#5a5a5a"/><animate attributeName="opacity" values="0.8;1;0.8" dur="4s" repeatCount="indefinite"/>`},
+            {name:'Титан',threshold:95,emoji:'👁️',sound:'cosmic',desc:'Всевидящее око. Измерения.',svg:()=>`<defs><radialGradient id="g4"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="100%" stop-color="#6666aa" stop-opacity="0"/></radialGradient></defs><circle cx="100" cy="100" r="52" fill="url(#g4)" opacity="0.3"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="3s" repeatCount="indefinite"/></circle><circle cx="100" cy="100" r="26" fill="#444466"/><circle cx="100" cy="100" r="17" fill="#8888cc"/><circle cx="100" cy="100" r="9" fill="#ccccff"><animate attributeName="r" values="7;11;7" dur="2s" repeatCount="indefinite"/></circle><circle cx="100" cy="100" r="3.5" fill="#fff"><animate attributeName="r" values="2.5;4.5;2.5" dur="1.5s" repeatCount="indefinite"/></circle>`},
+            {name:'Космо-Дракон',threshold:98,emoji:'✨',sound:'cosmic',desc:'Вершина эволюции. Космическая сущность.',svg:()=>`<defs><radialGradient id="g5"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="30%" stop-color="#e0e8ff" stop-opacity="0.5"/><stop offset="100%" stop-color="#8090d0" stop-opacity="0"/></radialGradient></defs><circle cx="100" cy="100" r="68" fill="url(#g5)" opacity="0.3"><animate attributeName="r" values="63;73;63" dur="4s" repeatCount="indefinite"/></circle><path d="M60 100 Q20 40 15 20 Q10 8 22 15 Q38 30 52 50 Q35 25 28 10 Q32 6 38 14 Q52 34 62 55" fill="#6a6a9a" opacity="0.6" stroke="#a0a0d0" stroke-width="1.3"/><path d="M140 100 Q180 40 185 20 Q190 8 178 15 Q162 30 148 50 Q165 25 172 10 Q168 6 162 14 Q148 34 138 55" fill="#6a6a9a" opacity="0.6" stroke="#a0a0d0" stroke-width="1.3"/><path d="M116 144 Q158 130 183 167 Q196 186 207 175 Q213 165 201 181" fill="none" stroke="#c0c0e0" stroke-width="4.5" stroke-linecap="round"/><path d="M201 181 L213 175 L205 191 Z" fill="#c0c0e0"/><ellipse cx="100" cy="124" rx="32" ry="23" fill="#2a2a4a"/><circle cx="96" cy="108" r="1.8" fill="#fff" opacity="0.8"><animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite"/></circle><circle cx="109" cy="112" r="1.4" fill="#fff" opacity="0.6"><animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.8s" repeatCount="indefinite"/></circle><ellipse cx="100" cy="87" rx="25" ry="21" fill="#2a2a4a"/><path d="M77 71 Q67 41 55 31" stroke="#c0c0e0" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M123 71 Q133 41 145 31" stroke="#c0c0e0" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="89" cy="82" rx="5.8" ry="6.2" fill="#ffffff"/><ellipse cx="111" cy="82" rx="5.8" ry="6.2" fill="#ffffff"/><ellipse cx="89" cy="82" rx="2.6" ry="4.8" fill="#1a1a3a"/><ellipse cx="111" cy="82" rx="2.6" ry="4.8" fill="#1a1a3a"/>`}
         ];
         const totalStages=bestiary.length;
 
         function renderPet(){
             const pet=bestiary[s.stage-1]||bestiary[0];
             petSvg.innerHTML=pet.svg();
-            document.getElementById('petNameTop').textContent=pet.name;
-            document.getElementById('petAvatar').textContent=pet.emoji;
-            document.getElementById('petStageTop').textContent=`Стадия ${s.stage}/${totalStages}`;
+            document.getElementById('headerName').textContent=pet.name;
+            document.getElementById('headerAvatar').textContent=pet.emoji;
+            document.getElementById('headerStage').textContent=`Стадия ${s.stage}/${totalStages}`;
             s.name=pet.name;s.level=s.stage;
             s.atk=s.stage+Math.floor(s.intellect/10);
             s.def=Math.floor(s.stage/3)+Math.floor(s.stability/20);
             updateEvoTrack();
+            if(currentPage==='bestiary')renderBestiary();
         }
         function updateEvoTrack(){
             const track=document.getElementById('evoTrack');track.innerHTML='';
@@ -456,16 +565,38 @@
             });
         }
 
+        // ============ БЕСТИАРИЙ (СТРАНИЦА) ============
+        function renderBestiary(){
+            const grid=document.getElementById('bestiaryGrid');
+            grid.innerHTML=bestiary.map((pet,i)=>{
+                const unlocked=i+1<=s.stage;
+                const current=i+1===s.stage;
+                return `<div class="bestiary-card ${unlocked?'unlocked':'locked'}" onclick="${unlocked?`showBestiaryDetail(${i})`:''}" style="${current?'border-color:rgba(255,255,255,0.2);':''}">
+                    <span class="ico">${pet.emoji}</span>
+                    <span class="name">${pet.name}</span>
+                    <span class="num">#${i+1} · Позн: ${pet.threshold}</span>
+                    ${current?'<span style="font-size:8px;color:#fff;">◀ текущий</span>':''}
+                </div>`;
+            }).join('');
+        }
+        function showBestiaryDetail(index){
+            const pet=bestiary[index];
+            const unlocked=index+1<=s.stage;
+            document.getElementById('bestiaryModalContent').innerHTML=`
+                <h2>${pet.emoji} ${pet.name} <span style="font-size:12px;color:var(--text2);">#${index+1}</span></h2>
+                <div style="width:120px;height:120px;margin:12px auto;">${unlocked?pet.svg():'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:50px;opacity:0.3;">🔒</div>'}</div>
+                <p>${unlocked?pet.desc:'???'}</p>
+                <p style="font-size:10px;color:var(--text2);">Порог познания: ${pet.threshold} | Статус: ${unlocked?(index+1===s.stage?'Текущий':'Открыт'):'Заблокирован'}</p>
+                ${index+1===s.stage?'<p style="color:var(--accent);font-size:11px;">◀ Это ваша текущая форма</p>':''}
+                <button onclick="closeModal('bestiaryModal')">Закрыть</button>
+            `;
+            openModal('bestiaryModal');
+        }
+
         // ============ ФРАЗЫ ============
         function getPhrase(cat){
-            const all={
-                calm:["*существую*","Тишина.","Я здесь.","*пульс*","Мысль...","Пространство.","Тепло.","Свет внутри.","Расту.","Гул.","Вибрации.","Поток.","Сознание.","Бытие.","Здесь и сейчас."],
-                hungry:["Голод...","Нужна энергия.","Истощение.","Покорми меня.","Слабость."],
-                evil:["Сбой!","Ошибка!","Хаос!","Взлом!","Тьма!"],
-                evolve:["Эволюция!","Новая форма!","Преображение!","Рост!","Я меняюсь!"],
-                battle:["В бой!","Сражение!","Удар!","Победа!","Столкновение!"]
-            };
-            const arr=all[cat]||all.calm;return arr[Math.floor(Math.random()*arr.length)];
+            const all={calm:["*существую*","Тишина.","Я здесь.","*пульс*","Мысль...","Пространство.","Тепло.","Свет внутри.","Расту.","Гул."],hungry:["Голод...","Нужна энергия.","Истощение."],evil:["Сбой!","Ошибка!","Хаос!"],evolve:["Эволюция!","Новая форма!","Преображение!"],battle:["В бой!","Сражение!","Удар!"]};
+            return(all[cat]||all.calm)[Math.floor(Math.random()*(all[cat]||all.calm).length)];
         }
 
         // ============ КВЕСТЫ ============
@@ -478,20 +609,18 @@
                 {desc:'Победить в битве',check:()=>s.achievements.includes('battle_win'),reward:()=>{s.thoughts+=300;s.atk+=2;}},
                 {desc:'Накопить 1000 мыслей',check:()=>s.thoughts>=1000,reward:()=>{s.souls+=5;s.quantum+=50;}},
             ];
-            const t=types[Math.floor(Math.random()*types.length)];
-            s.quests.push({desc:t.desc,check:t.check,reward:t.reward,complete:false});
-            showToast('📜 Новое задание: '+t.desc);
+            s.quests.push({...types[Math.floor(Math.random()*types.length)],complete:false});
+            showToast('📜 Новое задание!');
+            if(currentPage==='quests')renderQuests();
         }
         function checkQuests(){
-            s.quests.forEach((q,i)=>{
-                if(!q.complete&&q.check()){q.complete=true;q.reward();showToast('✅ Задание выполнено!');spawnEggs('🎉',15);}
-            });
+            s.quests.forEach(q=>{if(!q.complete&&q.check()){q.complete=true;q.reward();showToast('✅ Задание выполнено!');spawnEggs('🎉',15);}});
             s.quests=s.quests.filter(q=>!q.complete);
         }
         function renderQuests(){
             const el=document.getElementById('questList');
-            if(s.quests.length===0){el.innerHTML='<p style="color:#666;">Нет активных заданий. Создайте новое кодом QUEST или ждите автогенерации.</p>';return;}
-            el.innerHTML=s.quests.map(q=>`<div style="padding:8px;margin:4px 0;background:var(--card);border-radius:var(--rxs);font-size:12px;">📜 ${q.desc} ${q.complete?'✅':'⏳'}</div>`).join('');
+            if(s.quests.length===0){el.innerHTML='<p style="color:#666;text-align:center;margin-top:20px;">Нет активных заданий.</p>';return;}
+            el.innerHTML=s.quests.map(q=>`<div class="quest-card ${q.complete?'complete':''}"><span class="quest-ico">📜</span><div class="quest-info"><div class="quest-desc">${q.desc}</div><div class="quest-status ${q.complete?'done':''}">${q.complete?'Выполнено':'В процессе...'}</div></div></div>`).join('');
         }
 
         // ============ ДОСТИЖЕНИЯ ============
@@ -515,7 +644,7 @@
         function renderAchievements(){
             const el=document.getElementById('achieveList');
             if(s.achievements.length===0){el.innerHTML='<p style="color:#666;">Пока нет достижений.</p>';return;}
-            el.innerHTML=achieveDefs.filter(a=>s.achievements.includes(a.id)).map(a=>`<div style="padding:6px;margin:3px 0;background:var(--card);border-radius:var(--rxs);font-size:12px;">${a.msg}</div>`).join('');
+            el.innerHTML=achieveDefs.filter(a=>s.achievements.includes(a.id)).map(a=>`<div class="achieve-card"><span class="achieve-ico">${a.msg.split(' ')[0]}</span>${a.msg.split(' ').slice(1).join(' ')}</div>`).join('');
         }
 
         // ============ БОЕВАЯ СИСТЕМА ============
@@ -527,86 +656,78 @@
                 {name:'Тень',emoji:'👾',hp:30,atk:4,reward:()=>{s.thoughts+=80;s.souls+=2;}},
                 {name:'Червь Пустоты',emoji:'🐛',hp:50,atk:7,reward:()=>{s.thoughts+=150;s.quantum+=30;s.souls+=3;}},
                 {name:'Дух Хаоса',emoji:'👻',hp:40,atk:5,reward:()=>{s.patterns+=40;s.souls+=3;}},
-                {name:'Тёмная Материя',emoji:'🌑',hp:70,atk:10,reward:()=>{s.thoughts+=300;s.souls+=5;s.patterns+=30;}},
+                {name:'Тёмная Материя',emoji:'🌑',hp:70,atk:10,reward:()=>{s.thoughts+=300;s.souls+=5;}},
                 {name:'Кодовый Фантом',emoji:'💀',hp:90,atk:12,reward:()=>{s.thoughts+=500;s.souls+=8;s.synapses+=1;s.permanentBonus=1+s.synapses*0.25;}},
             ];
             s.battleEnemy=enemies[Math.floor(Math.random()*enemies.length)];
-            s.battleHP=100;
-            s.battleActive=true;
-            document.getElementById('appContainer').classList.add('battle-active');
+            s.battleHP=100;s.battleActive=true;
+            document.getElementById('petAreaPage').classList.add('battle-active');
             document.getElementById('enemyIndicator').textContent=s.battleEnemy.emoji;
             document.getElementById('hpBar').style.width='100%';
-            pBat();
-            showToast(`⚔️ Появился враг: ${s.battleEnemy.name}! ОЗ:${s.battleEnemy.hp}`);
-            talk(getPhrase('battle'));
-            updateUI();
+            pBat();showToast(`⚔️ Враг: ${s.battleEnemy.name}! ОЗ:${s.battleEnemy.hp}`);talk(getPhrase('battle'));
+            switchPage('home');updateUI();
         }
         function attackEnemy(){
-            if(!s.battleActive)return;
-            ia();
+            if(!s.battleActive)return;ia();
             const dmg=Math.max(1,s.atk+Math.floor(Math.random()*5));
-            s.battleEnemy.hp-=dmg;
-            showToast(`🗡️ Вы нанесли ${dmg} урона!`);
-            pt(500,'square',0.1,0.03);
+            s.battleEnemy.hp-=dmg;showToast(`🗡️ Вы нанесли ${dmg} урона!`);pt(500,'square',0.1,0.03);
             if(s.battleEnemy.hp<=0){
-                s.battleEnemy.reward();
-                s.battleActive=false;
-                s.achievements.push('battle_win');
-                document.getElementById('appContainer').classList.remove('battle-active');
+                s.battleEnemy.reward();s.battleActive=false;s.achievements.push('battle_win');
+                document.getElementById('petAreaPage').classList.remove('battle-active');
                 document.getElementById('hpBar').style.width='100%';
-                showToast(`🏆 ${s.battleEnemy.name} повержен!`);
-                spawnEggs('💥',20);
-                talk('Победа!');
-                checkAchievements();
+                showToast(`🏆 ${s.battleEnemy.name} повержен!`);spawnEggs('💥',20);talk('Победа!');checkAchievements();
             }else{
-                const enemyDmg=Math.max(1,s.battleEnemy.atk-Math.floor(s.def/2)+Math.floor(Math.random()*4));
-                s.battleHP=Math.max(0,s.battleHP-enemyDmg);
+                const edmg=Math.max(1,s.battleEnemy.atk-Math.floor(s.def/2)+Math.floor(Math.random()*4));
+                s.battleHP=Math.max(0,s.battleHP-edmg);
                 document.getElementById('hpBar').style.width=s.battleHP+'%';
-                showToast(`💢 ${s.battleEnemy.name} наносит ${enemyDmg} урона!`);
-                if(s.battleHP<=0){
-                    s.battleActive=false;
-                    s.stability=Math.max(0,s.stability-30);
-                    document.getElementById('appContainer').classList.remove('battle-active');
-                    document.getElementById('hpBar').style.width='100%';
-                    showToast('💀 Поражение... Потеря стабильности!');
-                    talk('Поражение...');
-                }
+                showToast(`💢 ${s.battleEnemy.name} наносит ${edmg} урона!`);
+                if(s.battleHP<=0){s.battleActive=false;s.stability=Math.max(0,s.stability-30);document.getElementById('petAreaPage').classList.remove('battle-active');document.getElementById('hpBar').style.width='100%';showToast('💀 Поражение...');talk('Поражение...');}
             }
             updateUI();
         }
 
-        // ============ ИНТЕРФЕЙС ============
+        // ============ UI ============
         function updateUI(){
-            document.getElementById('thoughtCount').textContent=Math.floor(s.thoughts);
-            document.getElementById('intellectValue').textContent=Math.floor(s.intellect);
-            document.getElementById('stabilityValue').textContent=Math.floor(s.stability);
-            document.getElementById('quantumValue').textContent=Math.floor(s.quantum);
-            document.getElementById('patternValue').textContent=Math.floor(s.patterns);
-            document.getElementById('lvlDisplay').textContent=s.stage;
-            document.getElementById('soulCount').textContent=Math.floor(s.souls);
-            document.getElementById('synapseCount').textContent=s.synapses;
-            document.getElementById('bonusDisplay').textContent=s.permanentBonus.toFixed(1)+'x';
-            document.getElementById('achieveCount').textContent=s.achievements.length;
-            document.getElementById('atkDisplay').textContent=s.atk;
-            document.getElementById('defDisplay').textContent=s.def;
-            document.getElementById('iqBar').style.width=s.intellect+'%';
-            document.getElementById('hungerBar').style.width=s.stability+'%';
-            document.getElementById('quantumBar').style.width=Math.min(100,s.quantum/5)+'%';
-            document.getElementById('patternBar').style.width=Math.min(100,s.patterns/2)+'%';
-            document.getElementById('prestigeBtn').style.opacity=s.thoughts>=1000?'1':'0.5';
+            document.getElementById('headerThoughts').textContent=Math.floor(s.thoughts);
+            document.getElementById('headerSouls').textContent=Math.floor(s.souls);
             document.getElementById('hpBar').style.width=s.battleActive?s.battleHP+'%':'100%';
+            if(currentPage==='stats')updateStatsPage();
+            if(currentPage==='settings')document.getElementById('achieveCount').textContent=s.achievements.length;
+        }
+        function updateStatsPage(){
+            document.getElementById('sIntellect').textContent=Math.floor(s.intellect);
+            document.getElementById('sStability').textContent=Math.floor(s.stability);
+            document.getElementById('sQuantum').textContent=Math.floor(s.quantum);
+            document.getElementById('sPatterns').textContent=Math.floor(s.patterns);
+            document.getElementById('sIqBar').style.width=s.intellect+'%';
+            document.getElementById('sStBar').style.width=s.stability+'%';
+            document.getElementById('sQtBar').style.width=Math.min(100,s.quantum/5)+'%';
+            document.getElementById('sPtBar').style.width=Math.min(100,s.patterns/2)+'%';
+            document.getElementById('sBonus').textContent=s.permanentBonus.toFixed(1)+'x';
+            document.getElementById('sLevel').textContent=s.stage;
+            document.getElementById('sAtk').textContent=s.atk;
+            document.getElementById('sDef').textContent=s.def;
+            document.getElementById('sSynapses').textContent=s.synapses;
         }
         function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',3000);}
         function talk(msg){const d=document.getElementById('dialogue');d.textContent=msg;d.style.opacity='1';setTimeout(()=>d.style.opacity='0.7',2500);}
         function spawnEggs(emoji,count=10){for(let i=0;i<count;i++){setTimeout(()=>{const egg=document.createElement('div');egg.className='egg';egg.textContent=emoji;egg.style.left=(Math.random()*70+15)+'%';egg.style.top=(Math.random()*50+25)+'%';egg.style.setProperty('--dx',(Math.random()*250-125)+'px');egg.style.setProperty('--dy',(Math.random()*-250-50)+'px');document.body.appendChild(egg);setTimeout(()=>egg.remove(),2200);},i*35);}pSec();}
         function collectSoul(){s.souls++;updateUI();pSec();spawnEggs('💎',5);talk('Душа собрана...');}
 
+        // ============ СБРОС ============
+        function confirmReset(){
+            document.getElementById('confirmTitle').textContent='💀 Полный сброс';
+            document.getElementById('confirmText').textContent='Вы уверены? Весь прогресс будет удалён безвозвратно!';
+            confirmCallback=()=>{Object.assign(s,{thoughts:50,intellect:3,stability:100,level:1,stage:1,hacked:false,synapses:0,permanentBonus:1.0,quantum:20,patterns:10,souls:0,totalClicks:0,totalFed:0,achievements:[],quests:[],battleHP:100,battleEnemy:null,battleActive:false,atk:1,def:0});renderPet();updateUI();switchPage('home');showToast('Прогресс сброшен.');};
+            openModal('confirmModal');
+        }
+        function confirmAction(){if(confirmCallback)confirmCallback();closeModal('confirmModal');confirmCallback=null;}
+
         // ============ ИГРОВОЙ ЦИКЛ ============
         function startMining(){
             clearInterval(window.miner);
             window.miner=setInterval(()=>{
-                const income=(0.08+(s.intellect/100)*0.35)*s.permanentBonus;
-                s.thoughts+=income;s.stability-=0.06;
+                s.thoughts+=(0.08+(s.intellect/100)*0.35)*s.permanentBonus;s.stability-=0.06;
                 if(s.stage>=3)s.quantum+=0.012*s.permanentBonus;
                 if(s.stage>=5)s.patterns+=0.008*s.permanentBonus;
                 if(s.stage>=10)s.quantum+=0.008;
@@ -642,16 +763,16 @@
             if(s.thoughts<0)s.thoughts=0;if(s.quantum<0)s.quantum=0;if(s.patterns<0)s.patterns=0;
             updateUI();checkEvolution();checkAchievements();
         }
-        function triggerHack(){s.hacked=true;document.getElementById('appContainer').classList.add('hacked');talk(getPhrase('evil'));pt(48,'sawtooth',0.7,0.04);if(actx){const o=actx.createOscillator(),g=actx.createGain();o.type='sawtooth';o.frequency.value=38;g.gain.value=0.025;o.connect(g);g.connect(actx.destination);o.start();window.ho=o;window.hg=g;}}
-        function removeHack(){s.hacked=false;document.getElementById('appContainer').classList.remove('hacked');talk('Стабильность восстановлена.');if(window.ho){window.hg.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+0.4);window.ho.stop(actx.currentTime+0.5);window.ho=null;}}
-        function triggerSingularity(){if(s.thoughts<1000)return;s.synapses++;s.permanentBonus=1+s.synapses*0.25;s.thoughts=50+s.synapses*15;s.intellect=3+s.synapses;s.stability=100;s.stage=1;s.hacked=false;s.quantum=20;s.patterns=10;s.battleActive=false;document.getElementById('appContainer').classList.remove('hacked','battle-active');if(window.ho){window.hg.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+0.3);window.ho.stop(actx.currentTime+0.5);window.ho=null;}renderPet();pt(1200,'sine',0.7,0.06);spawnEggs('🌀',28);talk('СИНГУЛЯРНОСТЬ. Новый цикл.');updateUI();}
+        function triggerHack(){s.hacked=true;document.getElementById('petAreaPage').classList.add('hacked');talk(getPhrase('evil'));pt(48,'sawtooth',0.7,0.04);if(actx){const o=actx.createOscillator(),g=actx.createGain();o.type='sawtooth';o.frequency.value=38;g.gain.value=0.025;o.connect(g);g.connect(actx.destination);o.start();window.ho=o;window.hg=g;}}
+        function removeHack(){s.hacked=false;document.getElementById('petAreaPage').classList.remove('hacked');talk('Стабильность восстановлена.');if(window.ho){window.hg.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+0.4);window.ho.stop(actx.currentTime+0.5);window.ho=null;}}
+        function triggerSingularity(){if(s.thoughts<1000)return;s.synapses++;s.permanentBonus=1+s.synapses*0.25;s.thoughts=50+s.synapses*15;s.intellect=3+s.synapses;s.stability=100;s.stage=1;s.hacked=false;s.quantum=20;s.patterns=10;s.battleActive=false;document.getElementById('petAreaPage').classList.remove('hacked','battle-active');if(window.ho){window.hg.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+0.3);window.ho.stop(actx.currentTime+0.5);window.ho=null;}renderPet();pt(1200,'sine',0.7,0.06);spawnEggs('🌀',28);talk('СИНГУЛЯРНОСТЬ. Новый цикл.');updateUI();switchPage('home');}
 
         // ============ КЛИК ПО ПИТОМЦУ ============
         document.getElementById('petContainer').addEventListener('click',()=>{
             ia();s.totalClicks++;
             if(s.battleActive){attackEnemy();return;}
             if(s.hacked){talk('Не трогай!');return;}
-            const bonus=1+Math.floor(s.intellect/30);s.thoughts+=bonus;
+            s.thoughts+=1+Math.floor(s.intellect/30);
             talk(getPhrase('calm'));
             const pet=bestiary[s.stage-1];
             if(pet.sound==='cosmic')pCs();else if(pet.sound==='roar')pR();else if(pet.sound==='howl')pH();else if(pet.sound==='echo')pE();else if(pet.sound==='purr')pP();else pC();
@@ -671,8 +792,7 @@
         anim();
 
         // ============ ЗАПУСК ============
-        renderPet();updateUI();startMining();talk('Я существую...');
-        generateQuest();
+        renderPet();updateUI();startMining();talk('Я существую...');generateQuest();
     </script>
 </body>
 </html>
